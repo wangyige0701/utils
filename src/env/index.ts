@@ -1,8 +1,8 @@
 import { singleton } from '@/clazz';
 
 /**
- * Get the environment variable, default is zh-CN,
- * in chrome use `navigator.language`,
+ * Get the environment variable, default is `zh-CN`,
+ * in chrome will use `navigator.language` to get the language in setting.
  */
 export const languageInfo = (() => {
 	const i = singleton(

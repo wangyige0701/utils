@@ -9,13 +9,13 @@ import {
 } from '.';
 
 describe('number', () => {
-	it(addZero.name, () => {
+	it('addZero', () => {
 		expect(addZero(1)).toBe('01');
 		expect(addZero(12, 3)).toBe('012');
 		expect(addZero('12', 4)).toBe('0012');
 	});
 
-	it(validNumber.name, () => {
+	it('validNumber', () => {
 		expect(validNumber(1)).toBe(1);
 		expect(validNumber('1')).toBe(1);
 		expect(validNumber('1.1')).toBe(1.1);
@@ -25,7 +25,7 @@ describe('number', () => {
 		expect(validNumber('true')).toBe(0);
 	});
 
-	it(inRange.name, () => {
+	it('inRange', () => {
 		expect(inRange(1, 0, 2)).toBe(true);
 		expect(inRange(1, 1, 2)).toBe(true);
 		expect(inRange(3, 2, 3)).toBe(true);
@@ -35,7 +35,7 @@ describe('number', () => {
 		expect(inRange(5, 1, 3)).toBe(false);
 	});
 
-	it(clamp.name, () => {
+	it('clamp', () => {
 		expect(clamp(1, 0, 2)).toBe(1);
 		expect(clamp(1, 1, 2)).toBe(1);
 		expect(clamp(1, 2, 5)).toBe(2);
@@ -45,7 +45,7 @@ describe('number', () => {
 		);
 	});
 
-	it(rangeRandom.name, () => {
+	it('rangeRandom', () => {
 		function check(...opts: Parameters<typeof rangeRandom>) {
 			const [min, max, options] = opts;
 			const { includeMax = true, includeMin = true } = options || {};

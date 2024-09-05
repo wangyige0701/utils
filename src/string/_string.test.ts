@@ -10,35 +10,35 @@ import {
 } from '.';
 
 describe('string', () => {
-	it(firstUpperCase.name, () => {
+	it('firstUpperCase', () => {
 		expect(firstUpperCase('hello')).toBe('Hello');
 		expect(firstUpperCase('Hello')).toBe('Hello');
 	});
 
-	it(firstLowerCase.name, () => {
+	it('firstLowerCase', () => {
 		expect(firstLowerCase('hello')).toBe('hello');
 		expect(firstLowerCase('HELLO')).toBe('hELLO');
 	});
 
-	it(upperCase.name, () => {
+	it('upperCase', () => {
 		expect(upperCase('hello')).toBe('HELLO');
 		expect(upperCase('HELLO')).toBe('HELLO');
 	});
 
-	it(lowerCase.name, () => {
+	it('lowerCase', () => {
 		expect(lowerCase('hello')).toBe('hello');
 		expect(lowerCase('HELLO')).toBe('hello');
 	});
 
-	it(splitByUpper.name, () => {
+	it('splitByUpper', () => {
 		expect(splitByUpper('HelloWorld')).toEqual(['Hello', 'World']);
 	});
 
-	it(splitBySpace.name, () => {
+	it('splitBySpace', () => {
 		expect(splitBySpace('Hello World')).toEqual(['Hello', 'World']);
 	});
 
-	it(splitByUnderscore.name, () => {
+	it('splitByUnderscore', () => {
 		expect(splitByUnderscore('Hello_World')).toEqual(['Hello', 'World']);
 	});
 });

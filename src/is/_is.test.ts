@@ -55,31 +55,31 @@ function check(fn: Function, result: Result) {
 }
 
 describe.concurrent('is', () => {
-	describe(isString.name, () => {
+	describe('isString', () => {
 		check(isString, { str: true });
 	});
 
-	describe(isNumber.name, () => {
+	describe('isNumber', () => {
 		check(isNumber, { num: true, nan: true, int: true, nInt: true });
 	});
 
-	describe(isBoolean.name, () => {
+	describe('isBoolean', () => {
 		check(isBoolean, { bool: true });
 	});
 
-	describe(isFunction.name, () => {
+	describe('isFunction', () => {
 		check(isFunction, { fun: true });
 	});
 
-	describe(isArray.name, () => {
+	describe('isArray', () => {
 		check(isArray, { arr: true });
 	});
 
-	describe(isObject.name, () => {
+	describe('isObject', () => {
 		check(isObject, { obj: true, thenable: true });
 	});
 
-	describe(isGeneralObject.name, () => {
+	describe('isGeneralObject', () => {
 		check(isGeneralObject, {
 			obj: true,
 			arr: true,
@@ -90,35 +90,35 @@ describe.concurrent('is', () => {
 		});
 	});
 
-	describe(isUndefined.name, () => {
+	describe('isUndefined', () => {
 		check(isUndefined, { und: true });
 	});
 
-	describe(isNull.name, () => {
+	describe('isNull', () => {
 		check(isNull, { null: true });
 	});
 
-	describe(isSymbol.name, () => {
+	describe('isSymbol', () => {
 		check(isSymbol, { symb: true });
 	});
 
-	describe(isDate.name, () => {
+	describe('isDate', () => {
 		check(isDate, { date: true });
 	});
 
-	describe(isRegExp.name, () => {
+	describe('isRegExp', () => {
 		check(isRegExp, { reg: true });
 	});
 
-	describe(isBigint.name, () => {
+	describe('isBigint', () => {
 		check(isBigint, { big: true });
 	});
 
-	describe(isPromise.name, () => {
+	describe('isPromise', () => {
 		check(isPromise, { prom: true });
 	});
 
-	describe(isPromiseLike.name, () => {
+	describe('isPromise', () => {
 		check(isPromiseLike, { prom: true, thenable: true });
 	});
 
@@ -126,14 +126,14 @@ describe.concurrent('is', () => {
 		check(isInteger, { num: true, int: true, nInt: false });
 	});
 
-	describe(isOdd.name, () => {
+	describe('isOdd', () => {
 		it(`${isOdd.name}:check`, () => {
 			expect(isOdd(1)).toBe(true);
 			expect(isOdd(2)).toBe(false);
 		});
 	});
 
-	describe(isEven.name, () => {
+	describe('isEven', () => {
 		it(`${isEven.name}:check`, () => {
 			expect(isEven(1)).toBe(false);
 			expect(isEven(2)).toBe(true);

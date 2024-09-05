@@ -5,6 +5,8 @@ import { isUndef } from '@/is';
  * Create a singleton class,
  * the instance of the class which proxy by this function will modify the constructor,
  * so that the instance which create by the constructor is still the same singleton.
+ * - When use `new` to create an instance, it will check the params of the constructor,
+ * and the check rule is only use strict equality to compare.
  */
 export const singleton = (() => {
 	let _singleton: <T extends Constructor<any>>(clazz: T) => T;

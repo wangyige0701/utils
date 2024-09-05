@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { toString, toNumber, toBoolean, toArray } from '.';
 
 describe('to', () => {
-	it(toString.name, () => {
+	it('toString', () => {
 		expect(toString(123)).toBe('123');
 		expect(toString('123')).toBe('123');
 		expect(toString(true)).toBe('true');
@@ -12,7 +12,7 @@ describe('to', () => {
 		expect(toString(null)).toBe('null');
 	});
 
-	it(toNumber.name, () => {
+	it('toNumber', () => {
 		expect(toNumber(123)).toBe(123);
 		expect(toNumber('123')).toBe(123);
 		expect(toNumber(true)).toBe(1);
@@ -21,7 +21,7 @@ describe('to', () => {
 		expect(toNumber([1, 'a'])).toBe(0);
 	});
 
-	it(toBoolean.name, () => {
+	it('toBoolean', () => {
 		expect(toBoolean(123)).toBe(true);
 		expect(toBoolean('123')).toBe(true);
 		expect(toBoolean('true')).toBe(true);
@@ -33,7 +33,7 @@ describe('to', () => {
 		expect(toBoolean(undefined)).toBe(false);
 	});
 
-	it(toArray.name, () => {
+	it('toArray', () => {
 		expect(toArray(123)).toEqual([123]);
 		expect(toArray('123')).toEqual(['123']);
 		expect(toArray([1, 2, 3])).toEqual([1, 2, 3]);

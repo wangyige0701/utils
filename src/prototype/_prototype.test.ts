@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { toPrimitiveString } from '.';
 
 describe('prototype', () => {
-	it(toPrimitiveString.name, () => {
+	it('toPrimitiveString', () => {
 		expect(toPrimitiveString('1')).toBe('[object String]');
 		expect(toPrimitiveString(1)).toBe('[object Number]');
 		expect(toPrimitiveString(true)).toBe('[object Boolean]');
