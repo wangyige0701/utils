@@ -15,7 +15,11 @@
 		"test": "vitest",
 		"coverage": "vitest run --coverage"
 	},
-	"keywords": [],
+	"keywords": [
+		"utils",
+		"JavaScript",
+		"TypeScript"
+	],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
