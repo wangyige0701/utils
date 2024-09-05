@@ -46,8 +46,8 @@ describe('Iterator', () => {
 			expect(iterator.next()).toEqual({ value: undefined, done: true });
 		}
 		{
-			const iterator = splitStringIterator('sayHelloWorld', /^([A-Z])$/);
-			expect(iterator.next()).toEqual({ value: 'say', done: false });
+			const iterator = splitStringIterator('SayHelloWorld', /^([A-Z])$/);
+			expect(iterator.next()).toEqual({ value: 'Say', done: false });
 			expect(iterator.next()).toEqual({ value: 'Hello', done: false });
 			expect(iterator.next()).toEqual({ value: 'World', done: false });
 			expect(iterator.next()).toEqual({ value: undefined, done: true });

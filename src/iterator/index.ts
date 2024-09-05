@@ -44,10 +44,10 @@ export function* rangeIterator(start: number, end?: number, step: number = 1) {
  * the second param is a callback function, which passing the length of match string, and is zero when void.
  * @param cb Call when yield the string
  */
-export function* splitStringIterator(
+export function* splitStringIterator<T = string>(
 	str: string,
 	use: string | RegExp | Fn<[inner: string, cb: Fn<[num?: number]>]>,
-	cb?: Fn<[inner: string], any>,
+	cb?: Fn<[s: string], T>,
 ) {
 	if (!isString(str)) {
 		throw new TypeError('First param must be a string');
@@ -77,7 +77,7 @@ export function* splitStringIterator(
 				};
 	}
 	if (!isFunction(cb)) {
-		cb = (s: string) => s;
+		cb = (s: string) => s as T;
 	}
 	const length = str.length;
 	const check = collect(splitBy);
@@ -108,7 +108,9 @@ export function* splitStringIterator(
 			continue;
 		}
 		const [end, len] = result;
-		yield cb(val);
+		if (val) {
+			yield cb(val);
+		}
 		val = str.slice(i, i + len);
 		i = end - 1;
 	}
