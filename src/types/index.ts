@@ -74,3 +74,15 @@ export type DeepPartial<T> = T extends object
 export type DeepRequired<T> = T extends object
 	? { [P in keyof T]-?: DeepRequired<T[P]> }
 	: T;
+
+export type FirstElement<T extends any[]> = T extends [infer F, ...any[]]
+	? F
+	: never;
+
+export type LastElement<T extends any[]> = T extends [...any[], infer L]
+	? L
+	: never;
+
+export type RestElement<T extends any[]> = T extends [any, ...infer R]
+	? R
+	: never;

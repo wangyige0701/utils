@@ -1,1 +1,1 @@
-export function pipe() {}
+export * from './pipe';
