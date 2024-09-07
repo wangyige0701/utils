@@ -61,7 +61,7 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 /**
  * Make some properties of an object optional, and the rest of the properties are required
  */
-export type PartialOPtional<T, K extends keyof T> = Omit<Required<T>, K> & Partial<Pick<T, K>>;
+export type PartialOptional<T, K extends keyof T> = Omit<Required<T>, K> & Partial<Pick<T, K>>;
 
 export type RemoveReadonly<T> = {
 	-readonly [P in keyof T]: T[P];
@@ -75,26 +75,31 @@ export type DeepRequired<T> = T extends object
 	? { [P in keyof T]-?: DeepRequired<T[P]> }
 	: T;
 
-export type FirstElement<T extends any[]> = T extends [infer F, ...any[]]
-	? F
-	: never;
+export type FirstElement<T extends any[]> = T extends []
+	? undefined
+	: T extends [infer F]
+		? F
+		: T extends [infer F, ...any[]]
+			? F
+			: never;
 
-export type LastElement<T extends any[]> = T extends [...any[], infer L]
-	? L
-	: never;
+export type LastElement<T extends any[]> = T extends []
+	? undefined
+	: T extends [infer L]
+		? L
+		: T extends [...any[], infer L]
+			? L
+			: never;
 
-export type RestElement<T extends any[]> = T extends [any, ...infer R]
-	? R
-	: never;
+export type RestElement<T extends any[]> = T extends [any, ...infer R] ? R : [];
 
 /**
  * Make all elements of a params array optional
  */
-export type ElementsOptional<T extends any[]> = T extends []
-	? []
-	: T extends [infer F, ...infer REST]
-		? [F?, ...ElementsOptional<REST>]
-		: [];
+export type ElementsOptional<
+	T extends any[],
+	F = FirstElement<T>,
+> = T extends [] ? [] : [F?, ...ElementsOptional<RestElement<T>>];
 
 /**
  * Extract elements of a specific length from an array
