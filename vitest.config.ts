@@ -9,6 +9,11 @@ export default defineConfig({
 			reporter: ['text', 'json', 'html'],
 			reportsDirectory: './.coverage',
 		},
+		typecheck: {
+			only: true,
+			checker: 'tsc',
+			include: ['**/*.d.{test,spec}.?(c|m)[jt]s?(x)'],
+		},
 	},
 	resolve: {
 		alias: {
