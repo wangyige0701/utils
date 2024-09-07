@@ -86,3 +86,33 @@ export type LastElement<T extends any[]> = T extends [...any[], infer L]
 export type RestElement<T extends any[]> = T extends [any, ...infer R]
 	? R
 	: never;
+
+/**
+ * Make all elements of a params array optional
+ */
+export type ElementsOptional<T extends any[]> = T extends []
+	? []
+	: T extends [infer F, ...infer REST]
+		? [F?, ...ElementsOptional<REST>]
+		: [];
+
+/**
+ * Extract elements of a specific length from an array
+ */
+export type ExtractElements<
+	Length extends number,
+	T extends any[],
+	V extends any[] = [],
+> = V['length'] extends Length
+	? V
+	: ExtractElements<Length, RestElement<T>, [...V, FirstElement<T>]>;
+
+/**
+ * Extract the rest of the elements from an array after extracting a specific length
+ */
+export type ExtractRest<Length extends number, T extends any[]> = T extends [
+	...ExtractElements<Length, T>,
+	...infer R,
+]
+	? R
+	: never;
