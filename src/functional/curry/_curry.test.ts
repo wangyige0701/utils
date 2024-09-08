@@ -12,11 +12,8 @@ describe('curry', () => {
 		expectTypeOf(result).parameters.toMatchTypeOf<
 			[number?, string?, boolean?]
 		>();
-
 		expectTypeOf(result(1)).parameters.toMatchTypeOf<[string?, boolean?]>();
-
 		expectTypeOf(result(1)('2')).parameters.toMatchTypeOf<[boolean?]>();
-
 		expectTypeOf(result(1)('2')(true)).toMatchTypeOf<string>();
 	});
 

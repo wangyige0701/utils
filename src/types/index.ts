@@ -63,7 +63,10 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
  */
 export type PartialOptional<T, K extends keyof T> = Omit<Required<T>, K> & Partial<Pick<T, K>>;
 
-export type RemoveReadonly<T> = {
+/**
+ * Remove readonly from all properties of an object
+ */
+export type Writable<T> = {
 	-readonly [P in keyof T]: T[P];
 };
 
