@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toString, toNumber, toBoolean, toArray } from '.';
+import { toString, toNumber, toBoolean, toArray, toRegExp } from '.';
 
 describe('to', () => {
 	it('toString', () => {
@@ -37,5 +37,12 @@ describe('to', () => {
 		expect(toArray(123)).toEqual([123]);
 		expect(toArray('123')).toEqual(['123']);
 		expect(toArray([1, 2, 3])).toEqual([1, 2, 3]);
+	});
+
+	it('toRegExp', () => {
+		expect(toRegExp('abc')).toEqual(/abc/);
+		expect(toRegExp('abc', 'i')).toEqual(/abc/i);
+		expect(toRegExp(/abc/)).toEqual(/abc/);
+		expect(toRegExp(/abc/, 'def', 'g')).toEqual(/abcdef/g);
 	});
 });
