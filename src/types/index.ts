@@ -18,7 +18,13 @@ export type AwaitableFn<T extends Fn<any[], any>> =
 	| T
 	| Fn<Parameters<T>, Awaitable<ReturnType<T>>>;
 
-export type Constructor<T> = new (...args: any[]) => T;
+/**
+ * Custom type for class constructor, because of the return type is necessary,
+ * so that the first parameter is the class type, and the second parameter is optional.
+ * @param T class type
+ * @param P constructor parameters
+ */
+export type Constructor<T, P extends any[] = []> = new (...args: P) => T;
 
 export type Elementof<T> = T extends (infer E)[] ? E : never;
 

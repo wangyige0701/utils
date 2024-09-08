@@ -9,7 +9,7 @@ import { isUndef } from '@/is';
  * and the check rule is only use strict equality to compare.
  */
 export const singleton = (() => {
-	let _singleton: <T extends Constructor<any>>(clazz: T) => T;
+	let _singleton: <T extends Constructor<any, any[]>>(clazz: T) => T;
 
 	function paramsCheck(params: any[], args: any[]) {
 		if (
@@ -22,7 +22,7 @@ export const singleton = (() => {
 		}
 	}
 
-	function _createConstructor<T extends Constructor<any>>(
+	function _createConstructor<T extends Constructor<any, any[]>>(
 		clazz: T,
 		proxy: boolean,
 	): Fn<any[], T> {
@@ -55,7 +55,7 @@ export const singleton = (() => {
 	}
 
 	if (isUndef(globalThis.Proxy)) {
-		_singleton = <T extends Constructor<any>>(clazz: T) => {
+		_singleton = <T extends Constructor<any, any[]>>(clazz: T) => {
 			const _construct = _createConstructor(clazz, true);
 			return new globalThis.Proxy(clazz, {
 				construct(_, args) {
@@ -64,7 +64,7 @@ export const singleton = (() => {
 			});
 		};
 	} else {
-		_singleton = <T extends Constructor<any>>(clazz: T) => {
+		_singleton = <T extends Constructor<any, any[]>>(clazz: T) => {
 			const _construct = _createConstructor(clazz, false);
 			return <T>class {
 				constructor(...args: any[]) {

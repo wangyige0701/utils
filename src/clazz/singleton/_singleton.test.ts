@@ -11,7 +11,7 @@ describe('clazz', () => {
 		const B = singleton(A);
 		const a1 = new B(2);
 		const a2 = new B(2);
-		const C = a1.constructor as Constructor<typeof A>;
+		const C = a1.constructor as Constructor<typeof A, [number]>;
 		const a3 = new C(2);
 
 		expect(a === a1).toBe(false);
@@ -29,7 +29,7 @@ describe('clazz', () => {
 		const B = singleton(A);
 		const a1 = new B(2);
 		const a2 = new B(2);
-		const C = a1.constructor as Constructor<typeof A>;
+		const C = a1.constructor as Constructor<typeof A, [number]>;
 		const a3 = new C(2);
 
 		expect(a === a1).toBe(false);
