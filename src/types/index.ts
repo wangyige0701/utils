@@ -100,6 +100,14 @@ export type LastElement<T extends any[]> = T extends []
 			? L
 			: never;
 
+/**
+ * Get the elements before the last element of an array
+ */
+export type PreElements<T extends any[]> = T extends [...infer P, any] ? P : [];
+
+/**
+ * Get the elements after the first element of an array
+ */
 export type RestElements<T extends any[]> = T extends [any, ...infer R]
 	? R
 	: [];
