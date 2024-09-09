@@ -39,7 +39,7 @@ type AnyCurryResult<
 		: never;
 
 /**
- * Create a curry function which can setting any length params.
+ * Create a curried function which can setting any length params.
  * @example
  * ```ts
  * function a(a: number, b: string, c: boolean) {

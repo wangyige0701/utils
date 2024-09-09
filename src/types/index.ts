@@ -113,7 +113,9 @@ export type RestElements<T extends any[]> = T extends [any, ...infer R]
 	: [];
 
 /**
- * Make all elements of a params array optional
+ * Make all elements of a array optional.
+ * If an element is optional, the result will ignore the element,
+ * because infer keyword can't infer optional keys in array.
  */
 export type ElementsOptional<
 	T extends any[],
@@ -139,4 +141,4 @@ export type ExtractRest<Length extends number, T extends any[]> = T extends [
 	...infer R,
 ]
 	? R
-	: never;
+	: [];
