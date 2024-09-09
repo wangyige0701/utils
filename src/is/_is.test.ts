@@ -130,6 +130,8 @@ describe.concurrent('is', () => {
 		it(`${isOdd.name}:check`, () => {
 			expect(isOdd(1)).toBe(true);
 			expect(isOdd(2)).toBe(false);
+			expect(isOdd(-3)).toBe(true);
+			expect(isOdd(-4)).toBe(false);
 		});
 	});
 
@@ -137,6 +139,8 @@ describe.concurrent('is', () => {
 		it(`${isEven.name}:check`, () => {
 			expect(isEven(1)).toBe(false);
 			expect(isEven(2)).toBe(true);
+			expect(isEven(-3)).toBe(false);
+			expect(isEven(-4)).toBe(true);
 		});
 	});
 });

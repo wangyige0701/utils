@@ -18,36 +18,36 @@ export function lowerCase<T extends string>(str: T): Lowercase<T> {
 
 export const splitByUpper = (() => {
 	const a = /([A-Z][^A-Z]*)/g;
-	const func = (str: string) => {
+	const splitByUpper = (str: string) => {
 		return str.trim().split(a).filter(Boolean);
 	};
 	const b = /^([A-Z])$/;
-	func.iterator = (str: string) => {
+	splitByUpper.iterator = (str: string) => {
 		return splitStringIterator(str, b);
 	};
-	return func;
+	return splitByUpper;
 })();
 
 export const splitBySpace = (() => {
 	const a = /\s+/g;
-	const func = (str: string) => {
+	const splitBySpace = (str: string) => {
 		return str.trim().split(a).filter(Boolean);
 	};
 	const b = /^\s+$/;
-	func.iterator = (str: string) => {
+	splitBySpace.iterator = (str: string) => {
 		return splitStringIterator(str, b);
 	};
-	return func;
+	return splitBySpace;
 })();
 
 export const splitByUnderscore = (() => {
 	const a = /_/g;
-	const func = (str: string) => {
+	const splitByUnderscore = (str: string) => {
 		return str.trim().split(a).filter(Boolean);
 	};
 	const b = /^\_+$/;
-	func.iterator = (str: string) => {
+	splitByUnderscore.iterator = (str: string) => {
 		return splitStringIterator(str, b);
 	};
-	return func;
+	return splitByUnderscore;
 })();

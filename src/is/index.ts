@@ -83,7 +83,7 @@ export const isInteger = (() => {
 	if (fn) {
 		return fn;
 	}
-	return function _isInteger<T>(number: T): boolean {
+	return function isInteger<T>(number: T): boolean {
 		return (
 			isNumber(number) &&
 			isFinite(number) &&
@@ -99,7 +99,7 @@ export function isOdd(num: number) {
 	if (!isInteger(num)) {
 		throw new TypeError('Expected an integer');
 	}
-	return (num & 1) === 1;
+	return Math.abs(num & 1) === 1;
 }
 
 export function isEven(num: number) {

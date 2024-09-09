@@ -90,7 +90,7 @@ export function rangeRandom(min: number, max: number, options?: RangeOption) {
  */
 export const matchNumber = (() => {
 	const reg = /^\d+(\.\d+)?$/;
-	return function _matchNumber(val: string | number) {
+	return function matchNumber(val: string | number) {
 		if (isNumber(val)) {
 			return true;
 		}

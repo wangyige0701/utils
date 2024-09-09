@@ -1,12 +1,5 @@
 import type { Fn } from '@/types';
-import {
-	isBoolean,
-	isFunction,
-	isNumber,
-	isRegExp,
-	isString,
-	isUndefined,
-} from '@/is';
+import { isFunction, isNumber, isRegExp, isString, isUndefined } from '@/is';
 
 /**
  * Create a range iterator

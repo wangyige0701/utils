@@ -63,7 +63,7 @@ export const toRegExp = (() => {
 		}
 		return rgx.toString();
 	}
-	return function <T extends Array<string | RegExp>>(
+	return function toRegExp<T extends Array<string | RegExp>>(
 		...vals: Params<T>
 	): RegExp {
 		if (vals.length === 0) {
