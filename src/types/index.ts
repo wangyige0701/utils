@@ -142,3 +142,11 @@ export type ExtractRest<Length extends number, T extends any[]> = T extends [
 ]
 	? R
 	: [];
+
+/**
+ * Join elements of an array into a string
+ */
+export type JoinElements<
+	T extends Array<string | number>,
+	S extends string = '',
+> = T extends [] ? S : `${FirstElement<T>}${JoinElements<RestElements<T>, S>}`;

@@ -6,5 +6,10 @@ export * from './number';
 export * from './string';
 export * from './regexp';
 export * from './functional';
+export * from './clazz';
+export * from './constants';
+export * from './env';
+export * from './array';
+export * from './object';
 
 export type * from './types';

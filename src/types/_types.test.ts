@@ -23,6 +23,7 @@ import type {
 	ElementsOptional,
 	ExtractElements,
 	ExtractRest,
+	JoinElements,
 } from '.';
 
 describe('type check', () => {
@@ -279,5 +280,11 @@ describe('type check', () => {
 		type TestB = [];
 		type B = ExtractRest<2, TestB>;
 		expectTypeOf<[]>().toMatchTypeOf<B>();
+	});
+
+	it('JoinElements', () => {
+		type TestA = ['hello', 'world', 123];
+		type A = JoinElements<TestA>;
+		expectTypeOf<'helloworld123'>().toMatchTypeOf<A>();
 	});
 });
