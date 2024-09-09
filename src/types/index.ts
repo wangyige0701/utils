@@ -52,7 +52,7 @@ export type PickValues<T extends object, K> = {
 };
 
 /**
- * omit the types for value from an object
+ * Omit the types for value from an object
  */
 export type OmitValues<T extends object, K> = {
 	[P in keyof T as T[P] extends K ? never : P]: T[P];
