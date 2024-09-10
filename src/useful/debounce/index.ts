@@ -73,7 +73,7 @@ export function debounce<
 	if (fixedArgs.length) {
 		useFunc = func.bind(null, ...(fixedArgs as any[]));
 	}
-	let timer: number | null = null;
+	let timer: NodeJS.Timeout | number | null = null;
 	let i = 0;
 	const cancel = () => {
 		if (timer) {
@@ -86,7 +86,7 @@ export function debounce<
 		let lock = false;
 		const index = ++i;
 		cancel();
-		timer = window.setTimeout(() => {
+		timer = globalThis.setTimeout(() => {
 			const result = useFunc(...(params as P));
 			callbacks.splice(0).forEach(fn => fn(result));
 		}, delay);
@@ -118,8 +118,3 @@ export function debounce<
 	};
 	return useDebounce as DebounceResult<P, R, Config>;
 }
-
-function test(a: number, b: number, c: boolean) {}
-const a = debounce(test);
-const b = a(1, 2, true).callback(v => {});
-b.cancel();
