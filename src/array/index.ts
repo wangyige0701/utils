@@ -1,5 +1,5 @@
+import type { JoinElements } from '@/types';
 import { isNumber, isString } from '@/is';
-import { JoinElements } from '@/types';
 
 export const VOID_ARRAY = Object.freeze([]) as [];
 

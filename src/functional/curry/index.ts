@@ -1,4 +1,4 @@
-import type { ExtractRest, Fn, ElementsOptional } from '@/types';
+import type { ExtractRest, Fn, ParamatersOptional } from '@/types';
 
 type CurryFunction = Fn<[...args: any[]], any>;
 
@@ -31,7 +31,7 @@ type AnyCurryResult<
 > = P extends []
 	? Fn<[], R>
 	: P extends any[]
-		? <Params extends ElementsOptional<P>>(
+		? <Params extends ParamatersOptional<P>>(
 				...args: Params
 			) => Params['length'] extends P['length']
 				? R
@@ -40,6 +40,7 @@ type AnyCurryResult<
 
 /**
  * Create a curried function which can setting any length params.
+ * The paramters of function inner can not be optional, because the type inference will be wrong.
  * @example
  * ```ts
  * function a(a: number, b: string, c: boolean) {
