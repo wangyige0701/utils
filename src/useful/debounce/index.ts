@@ -1,7 +1,7 @@
 import type { ParamatersOptional, ExcludeElements, Fn } from '@/types';
 import { isNumber } from '@/is';
 
-type DebounceOptions<P extends any[]> = {
+type DebounceOptions<Args extends any[]> = {
 	/**
 	 * The delay in milliseconds.
 	 * - Default is 300ms.
@@ -10,10 +10,10 @@ type DebounceOptions<P extends any[]> = {
 	/**
 	 * To fixed the arguments of the function.
 	 */
-	fixedArgs?: ParamatersOptional<P>;
+	fixedArgs?: Args;
 };
 
-type DebounceConfig<P extends any[]> = number | DebounceOptions<P>;
+type DebounceConfig<Args extends any[]> = number | DebounceOptions<Args>;
 
 type DebounceResultReturn<R> = {
 	/**
@@ -34,14 +34,14 @@ type DebounceResultReturnFn<P extends any[], R> = {
 type DebounceResult<
 	P extends any[],
 	R extends any,
-	Config extends DebounceConfig<P>,
+	Config extends DebounceConfig<ParamatersOptional<P>>,
 > = Config extends number
 	? DebounceResultReturnFn<P, R>
 	: DebounceResultReturnFn<
 			ExcludeElements<
 				P,
 				// @ts-expect-error
-				Config['fixedArgs']
+				Config['fixedArgs'] & {}
 			>,
 			R
 		>;
@@ -54,8 +54,11 @@ type DebounceResult<
 export function debounce<
 	P extends any[],
 	R extends any,
-	Config extends DebounceOptions<P>,
->(func: Fn<P, R>, options?: Config): DebounceResult<P, R, Config>;
+	Args extends ParamatersOptional<P>,
+>(
+	func: Fn<P, R>,
+	options?: DebounceOptions<Args>,
+): DebounceResult<P, R, DebounceOptions<Args>>;
 export function debounce<P extends any[], R extends any>(
 	func: Fn<P, R>,
 	delay?: number,
@@ -63,13 +66,16 @@ export function debounce<P extends any[], R extends any>(
 export function debounce<
 	P extends any[],
 	R extends any,
-	Config extends DebounceConfig<P>,
->(func: Fn<P, R>, options?: Config): DebounceResult<P, R, Config> {
+	Args extends ParamatersOptional<P>,
+>(
+	func: Fn<P, R>,
+	options?: DebounceConfig<Args>,
+): DebounceResult<P, R, DebounceConfig<Args>> {
 	if (isNumber(options)) {
-		options = { delay: options } as Config;
+		options = { delay: options } as DebounceConfig<Args>;
 	}
 	const { delay = 300, fixedArgs = [] } =
-		(options as DebounceOptions<P>) || {};
+		(options as DebounceOptions<Args>) || {};
 	let useFunc = func;
 	if (fixedArgs.length) {
 		useFunc = func.bind(null, ...(fixedArgs as any[]));
@@ -117,5 +123,5 @@ export function debounce<
 		cancel();
 		return useFunc(...(params as P));
 	};
-	return useDebounce as DebounceResult<P, R, Config>;
+	return useDebounce as DebounceResult<P, R, DebounceConfig<Args>>;
 }

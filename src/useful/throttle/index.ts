@@ -2,7 +2,7 @@ import type { ExcludeElements, Fn, ParamatersOptional } from '@/types';
 import { isNumber } from '@/is';
 import { precisionMillisecond } from '@/time';
 
-type ThrottleOptions<P extends any[]> = {
+type ThrottleOptions<Args extends any[]> = {
 	/**
 	 * The duration time in milliseconds.
 	 * - Default is 300ms.
@@ -11,10 +11,10 @@ type ThrottleOptions<P extends any[]> = {
 	/**
 	 * To fixed the arguments of the function.
 	 */
-	fixedArgs?: ParamatersOptional<P>;
+	fixedArgs?: Args;
 };
 
-type ThrottleConfig<P extends any[]> = number | ThrottleOptions<P>;
+type ThrottleConfig<Args extends any[]> = number | ThrottleOptions<Args>;
 
 type ThrottleResultReturn<P extends any[]> = {
 	(...args: P): void;
@@ -26,14 +26,14 @@ type ThrottleResultReturn<P extends any[]> = {
 
 type ThrottleResult<
 	P extends any[],
-	Config extends ThrottleConfig<P>,
+	Config extends ThrottleConfig<ParamatersOptional<P>>,
 > = Config extends number
 	? ThrottleResultReturn<P>
 	: ThrottleResultReturn<
 			ExcludeElements<
 				P,
 				// @ts-expect-error
-				Config['fixedArgs']
+				Config['fixedArgs'] & {}
 			>
 		>;
 
@@ -41,23 +41,23 @@ type ThrottleResult<
  * To make a function execute at most once in a given time period.
  * @param options When number, it is the throttle duration in milliseconds, default is 300ms.
  */
-export function throttle<P extends any[], Config extends ThrottleConfig<P>>(
+export function throttle<P extends any[], Args extends ParamatersOptional<P>>(
 	func: Fn<P>,
-	options?: Config,
-): ThrottleResult<P, Config>;
+	options?: ThrottleOptions<Args>,
+): ThrottleResult<P, ThrottleOptions<Args>>;
 export function throttle<P extends any[]>(
 	func: Fn<P>,
 	duration?: number,
 ): ThrottleResult<P, number>;
-export function throttle<P extends any[], Config extends ThrottleConfig<P>>(
+export function throttle<P extends any[], Args extends ParamatersOptional<P>>(
 	func: Fn<P>,
-	options?: Config,
-): ThrottleResult<P, Config> {
+	options?: ThrottleConfig<Args>,
+): ThrottleResult<P, ThrottleConfig<Args>> {
 	if (isNumber(options)) {
-		options = { duration: options } as Config;
+		options = { duration: options } as ThrottleOptions<Args>;
 	}
 	const { duration = 300, fixedArgs = [] } =
-		(options as ThrottleOptions<P>) || {};
+		(options as ThrottleOptions<Args>) || {};
 	let useFunc = func;
 	if (fixedArgs.length) {
 		useFunc = func.bind(null, ...(fixedArgs as any[]));
@@ -82,5 +82,5 @@ export function throttle<P extends any[], Config extends ThrottleConfig<P>>(
 	useThrottle.immediate = (...params: any) => {
 		_call(precisionMillisecond(), ...params);
 	};
-	return useThrottle as ThrottleResult<P, Config>;
+	return useThrottle as ThrottleResult<P, ThrottleConfig<Args>>;
 }
