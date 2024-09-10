@@ -18,6 +18,7 @@ import {
 	isInteger,
 	isOdd,
 	isEven,
+	isAsyncFunction,
 } from './index';
 
 const target = {
@@ -141,6 +142,13 @@ describe.concurrent('is', () => {
 			expect(isEven(2)).toBe(true);
 			expect(isEven(-3)).toBe(false);
 			expect(isEven(-4)).toBe(true);
+		});
+	});
+
+	describe('isAsyncFunction', () => {
+		it(`${isAsyncFunction.name}:check`, () => {
+			expect(isAsyncFunction(async () => {})).toBe(true);
+			expect(isAsyncFunction(() => {})).toBe(false);
 		});
 	});
 });

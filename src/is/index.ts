@@ -111,3 +111,7 @@ export function isEven(num: number) {
 	}
 	return (num & 1) === 0;
 }
+
+export function isAsyncFunction(val: any): val is Promise<any> {
+	return toString(val) === '[object AsyncFunction]';
+}
