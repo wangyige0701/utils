@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { delay } from '.';
 
-describe('useful', () => {
+describe('time', () => {
 	it('delay', async () => {
 		const start = performance.now();
 		await delay(1000);
