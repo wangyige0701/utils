@@ -113,13 +113,6 @@ export type RestElements<T extends any[]> = T extends [any, ...infer R]
 	: [];
 
 /**
- * Make all paramaters of an array optional.
- */
-export type ParamatersOptional<T extends any[], F = T[0]> = T extends []
-	? []
-	: [F?, ...ParamatersOptional<RestElements<T>>];
-
-/**
  * Extract elements of a specific length from an array
  */
 export type ExtractElements<
@@ -148,6 +141,16 @@ export type JoinElements<
 	S extends string = '',
 > = T extends [] ? S : `${FirstElement<T>}${JoinElements<RestElements<T>, S>}`;
 
+/**
+ * Make all paramaters of an array optional.
+ */
+export type ParamatersOptional<T extends any[], F = T[0]> = T extends []
+	? []
+	: [F?, ...ParamatersOptional<RestElements<T>>];
+
+/**
+ * Exclude give array elements from an array, the give array must belong the first paramater.
+ */
 export type ExcludeElements<
 	T extends any[],
 	P extends ParamatersOptional<T>,
