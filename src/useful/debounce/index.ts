@@ -1,9 +1,10 @@
-import { isNumber } from '@/is';
 import type { ParamatersOptional, ExcludeElements, Fn } from '@/types';
+import { isNumber } from '@/is';
 
 type DebounceOptions<P extends any[]> = {
 	/**
 	 * The delay in milliseconds.
+	 * - Default is 300ms.
 	 */
 	delay?: number;
 	/**
@@ -48,7 +49,7 @@ type DebounceResult<
 /**
  * A debounce function that can be used to limit the rate at which a function is executed.
  * @param func Function to be debounced
- * @param options When number, it is the delay.
+ * @param options When number, it is the delay, and default is 300ms.
  */
 export function debounce<
 	P extends any[],

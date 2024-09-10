@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { delay } from '@/useful';
+import { delay } from '@/time';
 import { debounce } from '.';
 
 describe('debounce', () => {
@@ -7,7 +7,7 @@ describe('debounce', () => {
 		return a + b + c;
 	}
 
-	it('delay one second', async () => {
+	it('use debounce', async () => {
 		const result = debounce(test, 1000);
 		function use() {
 			return new Promise(resolve => {
