@@ -113,14 +113,11 @@ export type RestElements<T extends any[]> = T extends [any, ...infer R]
 	: [];
 
 /**
- * Make all elements of a array optional.
- * If an element is optional, the result will ignore the element,
- * because infer keyword can't infer optional keys in array.
+ * Make all paramaters of an array optional.
  */
-export type ElementsOptional<
-	T extends any[],
-	F = FirstElement<T>,
-> = T extends [] ? [] : [F?, ...ElementsOptional<RestElements<T>>];
+export type ParamatersOptional<T extends any[], F = T[0]> = T extends []
+	? []
+	: [F?, ...ParamatersOptional<RestElements<T>>];
 
 /**
  * Extract elements of a specific length from an array
@@ -150,3 +147,20 @@ export type JoinElements<
 	T extends Array<string | number>,
 	S extends string = '',
 > = T extends [] ? S : `${FirstElement<T>}${JoinElements<RestElements<T>, S>}`;
+
+export type ExcludeElements<
+	T extends any[],
+	P extends ParamatersOptional<T>,
+	A extends any[] = [],
+> = T extends []
+	? []
+	: T extends any[]
+		? A['length'] extends P['length']
+			? T
+			: ExcludeElements<
+					RestElements<T>,
+					// @ts-expect-error
+					P,
+					[...A, T[0]]
+				>
+		: never;

@@ -20,10 +20,11 @@ import type {
 	LastElement,
 	PreElements,
 	RestElements,
-	ElementsOptional,
+	ParamatersOptional,
 	ExtractElements,
 	ExtractRest,
 	JoinElements,
+	ExcludeElements,
 } from '.';
 
 describe('type check', () => {
@@ -256,10 +257,14 @@ describe('type check', () => {
 		expectTypeOf<[]>().toMatchTypeOf<C>();
 	});
 
-	it('ElementsOptional', () => {
-		function test(a: number, b: string, c: boolean) {}
-		type A = ElementsOptional<Parameters<typeof test>>;
+	it('ParamatersOptional', () => {
+		function testA(a: number, b: string, c: boolean) {}
+		type A = ParamatersOptional<Parameters<typeof testA>>;
 		expectTypeOf<[number?, string?, boolean?]>().toMatchTypeOf<A>();
+
+		function testB(a: number, b: string, c?: boolean) {}
+		type B = ParamatersOptional<Parameters<typeof testB>>;
+		expectTypeOf<[number, string?, boolean?]>().toMatchTypeOf<B>();
 	});
 
 	it('ExtractElements', () => {
@@ -286,5 +291,11 @@ describe('type check', () => {
 		type TestA = ['hello', 'world', 123];
 		type A = JoinElements<TestA>;
 		expectTypeOf<'helloworld123'>().toMatchTypeOf<A>();
+	});
+
+	it('ExcludeElements', () => {
+		type TestA = [number, string, boolean, '1', 44];
+		type A = ExcludeElements<TestA, [number, string]>;
+		expectTypeOf<[boolean, '1', 44]>().toMatchTypeOf<A>();
 	});
 });
