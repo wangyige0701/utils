@@ -41,7 +41,7 @@ export const splitBySpace = (() => {
 })();
 
 export const splitByUnderscore = (() => {
-	const a = /_/g;
+	const a = /\_/g;
 	const splitByUnderscore = (str: string) => {
 		return str.trim().split(a).filter(Boolean);
 	};
@@ -50,4 +50,16 @@ export const splitByUnderscore = (() => {
 		return splitStringIterator(str, b);
 	};
 	return splitByUnderscore;
+})();
+
+export const splitByPoint = (() => {
+	const a = /\./g;
+	const splitByPoint = (str: string) => {
+		return str.trim().split(a).filter(Boolean);
+	};
+	const b = /^\.+$/;
+	splitByPoint.iterator = (str: string) => {
+		return splitStringIterator(str, b);
+	};
+	return splitByPoint;
 })();

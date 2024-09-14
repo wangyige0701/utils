@@ -7,7 +7,8 @@ import {
 	splitByUpper,
 	splitBySpace,
 	splitByUnderscore,
-} from '.';
+	splitByPoint,
+} from '@/string';
 
 describe('string', () => {
 	it('firstUpperCase', () => {
@@ -49,6 +50,14 @@ describe('string', () => {
 	it('splitByUnderscore', () => {
 		expect(splitByUnderscore('Hello_World')).toEqual(['Hello', 'World']);
 		const iterator = splitByUnderscore.iterator('Hello__World');
+		expect(iterator.next().value).toBe('Hello');
+		expect(iterator.next().value).toBe('World');
+		expect(iterator.next().done).toBe(true);
+	});
+
+	it('splitByPoint', () => {
+		expect(splitByPoint('Hello.World')).toEqual(['Hello', 'World']);
+		const iterator = splitByPoint.iterator('Hello.World');
 		expect(iterator.next().value).toBe('Hello');
 		expect(iterator.next().value).toBe('World');
 		expect(iterator.next().done).toBe(true);
