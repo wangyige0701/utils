@@ -45,6 +45,10 @@ export const hasOwn = (() => {
 	};
 })();
 
+/**
+ * Check if object has give property,
+ * and the property can use point notation.
+ */
 export function hasProp(o: object, prop: string) {
 	if (!isString(prop)) {
 		throw new Error("'prop' must be string");
@@ -60,6 +64,9 @@ export function hasProp(o: object, prop: string) {
 	return true;
 }
 
+/**
+ * Get the value in the object by property which property can use point notation.
+ */
 export function getProp(o: object, prop: string) {
 	if (!isString(prop)) {
 		throw new Error("'prop' must be string");
