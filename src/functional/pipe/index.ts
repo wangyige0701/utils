@@ -1,4 +1,4 @@
-import type { Elementof, Fn, LastElement } from '@/types';
+import type { ElementOf, Fn, LastElement } from '@/types';
 import { isFunction } from '@/is';
 
 type PipeParams = Array<Fn<[any], any>>;
@@ -10,7 +10,7 @@ type PipeFirstParam<T extends PipeParams> = T[0] extends undefined
 		: any;
 
 type PipeResult<T extends PipeParams, Last = LastElement<T>> =
-	Last extends Elementof<PipeParams> ? ReturnType<Last> : never;
+	Last extends ElementOf<PipeParams> ? ReturnType<Last> : never;
 
 type PipeReturn<T extends PipeParams> = (
 	param: PipeFirstParam<T>,

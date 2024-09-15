@@ -26,7 +26,7 @@ export type AwaitableFn<T extends Fn<any[], any>> =
  */
 export type Constructor<T, P extends any[] = []> = new (...args: P) => T;
 
-export type Elementof<T> = T extends (infer E)[] ? E : never;
+export type ElementOf<T> = T extends (infer E)[] ? E : never;
 
 /**
  * The type of the resolve function of a promise

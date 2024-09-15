@@ -6,7 +6,7 @@ import type {
 	Fn,
 	AwaitableFn,
 	Constructor,
-	Elementof,
+	ElementOf,
 	PromiseResolve,
 	PromiseReject,
 	PickValues,
@@ -116,9 +116,9 @@ describe('type check', () => {
 		expectTypeOf(TestB).toMatchTypeOf<B>();
 	});
 
-	it('Elementof', () => {
+	it('ElementOf', () => {
 		const testA = [1, 2, 3, 4];
-		type A = Elementof<typeof testA>;
+		type A = ElementOf<typeof testA>;
 		expectTypeOf(1).toMatchTypeOf<A>();
 	});
 
