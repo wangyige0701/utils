@@ -139,7 +139,11 @@ export type ExtractRest<Length extends number, T extends any[]> = T extends [
 export type JoinElements<
 	T extends Array<string | number>,
 	S extends string = '',
-> = T extends [] ? S : `${FirstElement<T>}${JoinElements<RestElements<T>, S>}`;
+> = T extends []
+	? ''
+	: T['length'] extends 1
+		? `${FirstElement<T>}${JoinElements<RestElements<T>, S>}`
+		: `${FirstElement<T>}${S}${JoinElements<RestElements<T>, S>}`;
 
 /**
  * Make all paramaters of an array optional.

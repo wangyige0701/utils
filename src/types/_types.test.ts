@@ -291,6 +291,8 @@ describe('type check', () => {
 		type TestA = ['hello', 'world', 123];
 		type A = JoinElements<TestA>;
 		expectTypeOf<'helloworld123'>().toMatchTypeOf<A>();
+		type B = JoinElements<TestA, ','>;
+		expectTypeOf<'hello,world,123'>().toMatchTypeOf<B>();
 	});
 
 	it('ExcludeElements', () => {
