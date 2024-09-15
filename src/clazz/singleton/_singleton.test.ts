@@ -38,4 +38,15 @@ describe('clazz', () => {
 
 		vi.unstubAllGlobals();
 	});
+
+	it('singleton with default params', () => {
+		class A {
+			constructor(a: number, b: string = 'hello') {}
+		}
+		const ASingleton = singleton(A, 2);
+		const a1 = new ASingleton('s');
+		const a2 = new ASingleton('s');
+
+		expect(a1 === a2).toBe(true);
+	});
 });

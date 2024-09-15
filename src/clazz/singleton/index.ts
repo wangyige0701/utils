@@ -1,4 +1,9 @@
-import type { Constructor, Fn } from '@/types';
+import type {
+	Constructor,
+	ExcludeElements,
+	Fn,
+	ParamatersOptional,
+} from '@/types';
 import { isUndef } from '@/is';
 
 /**
@@ -7,9 +12,18 @@ import { isUndef } from '@/is';
  * so that the instance which create by the constructor is still the same singleton.
  * - When use `new` to create an instance, it will check the params of the constructor,
  * and the check rule is only use strict equality to compare.
+ * - singleton function can setting the params of the constructor,
+ * and the return constructor's params are the rest params of the origin constructor.
  */
 export const singleton = (() => {
-	let singleton: <T extends Constructor<any, any[]>>(clazz: T) => T;
+	let singleton: <
+		T extends Constructor<any, any[]>,
+		P extends ConstructorParameters<T>,
+		Params extends ParamatersOptional<P>,
+	>(
+		clazz: T,
+		...params: Params
+	) => Constructor<InstanceType<T>, ExcludeElements<P, Params>>;
 
 	function paramsCheck(params: any[], args: any[]) {
 		if (
@@ -17,7 +31,9 @@ export const singleton = (() => {
 			!params.every((item, index) => item === args[index])
 		) {
 			throw new Error(
-				'Singleton class can not be constructed with different parameters',
+				'Singleton class can not be constructed with different parameters\n' +
+					`Expected: [${[...params]}]\n` +
+					`Actual: [${[...args]}]`,
 			);
 		}
 	}
@@ -55,22 +71,44 @@ export const singleton = (() => {
 	}
 
 	if (isUndef(globalThis.Proxy)) {
-		singleton = <T extends Constructor<any, any[]>>(clazz: T) => {
+		singleton = <
+			T extends Constructor<any, any[]>,
+			P extends ConstructorParameters<T>,
+			Params extends ParamatersOptional<P>,
+		>(
+			clazz: T,
+			...params: Params
+		) => {
 			const _construct = _createConstructor(clazz, true);
-			return new globalThis.Proxy(clazz, {
-				construct(_, args) {
-					return _construct(...args);
+			return new globalThis.Proxy(
+				clazz as Constructor<
+					InstanceType<T>,
+					ExcludeElements<P, Params>
+				>,
+				{
+					construct(_, args) {
+						return _construct(...params, ...args);
+					},
 				},
-			});
+			);
 		};
 	} else {
-		singleton = <T extends Constructor<any, any[]>>(clazz: T) => {
+		singleton = <
+			T extends Constructor<any, any[]>,
+			P extends ConstructorParameters<T>,
+			Params extends ParamatersOptional<P>,
+		>(
+			clazz: T,
+			...params: Params
+		) => {
 			const _construct = _createConstructor(clazz, false);
-			return <T>class {
-				constructor(...args: any[]) {
-					return _construct(...args);
+			return <Constructor<InstanceType<T>, ExcludeElements<P, Params>>>(
+				class {
+					constructor(...args: any[]) {
+						return _construct(...params, ...args);
+					}
 				}
-			};
+			);
 		};
 	}
 
