@@ -1,6 +1,7 @@
-import type { Fn } from '@/types';
-import { isFunction, isString, isSymbol } from '@/is';
+import type { Fn, OmitValues } from '@/types';
+import { isFunction, isNull, isString, isSymbol, isUndefined } from '@/is';
 import { splitByPoint } from '@/string';
+import { toArray } from '@/to';
 
 export const VOID_OBJECT = Object.freeze({}) as {};
 
@@ -41,6 +42,9 @@ export const hasOwn = (() => {
 		};
 	}
 	return function hasOwn(o: object, prop: PropertyKey): boolean {
+		if (isNull(o)) {
+			return false;
+		}
 		return _use(o, prop);
 	};
 })();
@@ -83,3 +87,79 @@ export function getProp(o: object, prop: string) {
 	}
 	return result;
 }
+
+/**
+ * Use `Object.keys` to get the keys of the object.
+ */
+export function objectKeys<T extends object>(o: T) {
+	return Object.keys(
+		o,
+	) as Array<`${keyof T & (string | number | boolean | null | undefined)}`>;
+}
+
+/**
+ * Use `in` keyword to check whether the key is in the object.
+ */
+export function isKeyOf<T extends object>(o: T, k: any): k is keyof T {
+	return k in o;
+}
+
+/**
+ * Check whether the value is in the enum object,
+ * use `Object.values` to get the values of the object.
+ */
+export function inEnum(o: object, k: any) {
+	return Object.values(o).includes(k);
+}
+
+/**
+ * Pick giv properties from the object.
+ * If use `omitUndefined` function, the result will filter undefined values.
+ *
+ * @example
+ * ```ts
+ * const a = { a: 1, b: 2, c: undefined };
+ *
+ * objectPick(a, 'a', 'c') // { a: 1, c: undefined }
+ * objectPick.omitUndefined(a, 'a', 'c') // { a: 1 }
+ *
+ * ```
+ */
+export const objectPick = (() => {
+	function _pick<T extends object, K extends keyof T>(
+		o: T,
+		keys: K[],
+		omit: true,
+	): OmitValues<Pick<T, K>, undefined>;
+	function _pick<T extends object, K extends keyof T>(
+		o: T,
+		keys: K[],
+		omit?: false,
+	): Pick<T, K>;
+	function _pick<T extends object, K extends keyof T>(
+		o: T,
+		keys: K[],
+		omit: boolean = false,
+	) {
+		return keys.reduce(
+			(prev, curr) => {
+				if (curr in o) {
+					if (!omit || !isUndefined(o[curr])) {
+						prev[curr] = o[curr];
+					}
+				}
+				return prev;
+			},
+			{} as Pick<T, K>,
+		);
+	}
+	const objectPick = <T extends object, K extends keyof T>(
+		o: T,
+		keys: K | K[],
+	) => _pick(o, toArray(keys), false);
+	objectPick.omitUndefined = <T extends object, K extends keyof T>(
+		o: T,
+		keys: K | K[],
+	) => _pick(o, toArray(keys), true);
+	return objectPick;
+})();
