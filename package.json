@@ -2,26 +2,38 @@
 	"name": "@wang-yige/utils",
 	"version": "0.0.1",
 	"type": "module",
-	"description": "",
+	"description": "Some utils for JavaScript / TypeScript, collected from daily use",
 	"main": "dist/index.cjs",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./dist/index.cjs",
+			"import": "./dist/index.mjs"
+		}
+	},
+	"sideEffects": false,
 	"files": [
 		"dist"
 	],
+	"keywords": [
+		"utils",
+		"JavaScript",
+		"TypeScript"
+	],
+	"author": "Wang Yige <wyg1776686515@gmail.com>",
+	"homepage": "https://github.com/wangyige0701/utils#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wangyige0701/utils.git"
+	},
 	"scripts": {
 		"build": "rollup -c",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"coverage": "vitest run --coverage"
 	},
-	"keywords": [
-		"utils",
-		"JavaScript",
-		"TypeScript"
-	],
-	"author": "",
-	"license": "ISC",
 	"devDependencies": {
 		"@rollup/plugin-alias": "^5.1.0",
 		"@rollup/plugin-commonjs": "^26.0.1",
