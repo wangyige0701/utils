@@ -16,9 +16,16 @@ export function isFunction(val: any): val is Function {
 	return typeof val === 'function';
 }
 
-export function isArray<T = any>(val: any): val is Array<T> {
-	return Array.isArray(val);
-}
+export const isArray = (() => {
+	if (isFunction(Array.isArray)) {
+		return function isArray<T = any>(val: any): val is Array<T> {
+			return Array.isArray(val);
+		};
+	}
+	return function isArray<T = any>(val: any): val is Array<T> {
+		return toString(val) === '[object Array]';
+	};
+})();
 
 export function isObject<T = any>(val: any): val is Record<string, T> {
 	return toString(val) === '[object Object]';
