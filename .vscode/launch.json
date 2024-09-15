@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Ts",
+            "type": "node",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "runtimeArgs": ["--loader", "ts-node/esm", "${file}"]
+        }
+    ]
+}

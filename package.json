@@ -26,7 +26,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/wangyige0701/utils.git"
+		"url": "git+https://github.com/wangyige0701/utils.git"
 	},
 	"scripts": {
 		"build": "rollup -c",
@@ -45,8 +45,10 @@
 		"rollup-plugin-dts": "^6.1.1",
 		"rollup-plugin-esbuild": "^6.1.1",
 		"rollup-plugin-typescript2": "^0.36.0",
+		"ts-node": "^10.9.2",
 		"tslib": "^2.7.0",
 		"typescript": "^5.5.4",
 		"vitest": "^2.0.5"
-	}
+	},
+	"packageManager": "pnpm@9.1.0"
 }
