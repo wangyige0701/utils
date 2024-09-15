@@ -1,6 +1,6 @@
+import type { Constructor } from '@/types';
 import { describe, it, expect, vi } from 'vitest';
-import { singleton } from '.';
-import { Constructor } from '@/types';
+import { singleton } from '@/clazz';
 
 describe('clazz', () => {
 	it('singleton', () => {

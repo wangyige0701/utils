@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toString, toNumber, toBoolean, toArray, toRegExp } from '.';
+import { toString, toNumber, toBoolean, toArray, toRegExp } from '@/to';
 
 describe('to', () => {
 	it('toString', () => {

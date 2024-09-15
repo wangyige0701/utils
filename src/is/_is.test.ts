@@ -19,7 +19,7 @@ import {
 	isOdd,
 	isEven,
 	isAsyncFunction,
-} from './index';
+} from '@/is';
 
 const target = {
 	str: 'hello',

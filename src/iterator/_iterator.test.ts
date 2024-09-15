@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rangeIterator, splitStringIterator } from './index';
+import { rangeIterator, splitStringIterator } from '@/iterator';
 
 describe('Iterator', () => {
 	it('rangeIterator', () => {

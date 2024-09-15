@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { delay } from '@/time';
-import { debounce } from '.';
+import { debounce } from '@/useful';
 
 describe('debounce', () => {
 	function test(a: number, b: string, c: boolean) {

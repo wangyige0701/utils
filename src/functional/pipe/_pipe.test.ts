@@ -1,5 +1,5 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { pipe } from '.';
+import { pipe } from '@/functional';
 
 describe('pipe', () => {
 	function a(a: string): number {

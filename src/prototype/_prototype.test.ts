@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toPrimitiveString } from '.';
+import { toPrimitiveString } from '@/prototype';
 
 describe('prototype', () => {
 	it('toPrimitiveString', () => {

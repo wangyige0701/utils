@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { throttle } from '.';
 import { delay } from '@/time';
+import { throttle } from '@/useful';
 
 describe('throttle', () => {
 	it('use throttle', async () => {

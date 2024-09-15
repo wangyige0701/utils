@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ParallelTask } from '.';
 import { delay } from '@/time';
+import { ParallelTask } from '@/useful';
 
 describe('ParallelTask', () => {
 	it('use parallelTask', async () => {

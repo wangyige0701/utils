@@ -1,5 +1,5 @@
+import type { Awaitable, Fn, PromiseReject, PromiseResolve } from '@/types';
 import { isFunction, isNumber } from '@/is';
-import { Awaitable, Fn, PromiseReject, PromiseResolve } from '@/types';
 
 type Task<T> = Promise<T> & {
 	cancel: Fn;

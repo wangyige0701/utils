@@ -1,5 +1,5 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
-import { curry, anyCurry } from '.';
+import { curry, anyCurry } from '@/functional';
 
 describe('curry', () => {
 	function a(a: number, b: string, c: boolean) {

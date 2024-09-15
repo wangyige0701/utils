@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { delay } from '.';
+import { delay } from '@/time';
 
 describe('time', () => {
 	it('delay', async () => {

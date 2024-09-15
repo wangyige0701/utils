@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { nextTick } from '.';
 import { delay } from '@/time';
+import { nextTick } from '@/useful';
 
 describe('nextTick', () => {
 	it('use nextTick', async () => {

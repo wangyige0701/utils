@@ -6,7 +6,7 @@ import {
 	clamp,
 	rangeRandom,
 	matchNumber,
-} from '.';
+} from '@/number';
 
 describe('number', () => {
 	it('addZero', () => {
