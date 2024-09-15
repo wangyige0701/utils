@@ -9,8 +9,8 @@ export function delay(time: number, cb?: Fn<[], any>) {
 		throw new Error('The delay time must be a positive number');
 	}
 	return new Promise<void>(resolve => {
-		globalThis.setTimeout(() => {
-			cb?.();
+		globalThis.setTimeout(async () => {
+			await cb?.();
 			resolve();
 		}, time);
 	});
