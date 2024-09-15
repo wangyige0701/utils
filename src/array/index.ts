@@ -16,9 +16,47 @@ export const joinElements = (() => {
 		}
 		throw new Error(`Invalid argument ${val}, must be a string or number`);
 	}
-	return function joinElements<T extends Array<string | number>>(
+	let _separator = '';
+	const joinElements = <T extends Array<string | number>>(
 		...args: T
-	): JoinElements<T> {
-		return args.map(_toString).join('') as JoinElements<T>;
+	): JoinElements<T> => {
+		return args.map(_toString).join(_separator) as JoinElements<T>;
 	};
+	joinElements.separate = <S extends string>(separator: S) => {
+		if (!isString(separator)) {
+			throw new Error(`Invalid argument ${separator}, must be a string`);
+		}
+		_separator = separator;
+		return <T extends Array<string | number>>(
+			...args: T
+		): JoinElements<T, S> => {
+			return joinElements(...args) as JoinElements<T, S>;
+		};
+	};
+	return joinElements;
 })();
+
+export function at<T>(arr: readonly [], index: number): undefined;
+export function at<T>(arr: readonly T[], index: number): T;
+export function at<T>(arr: readonly T[], index: number): T | undefined {
+	const len = arr.length;
+	if (!len) {
+		return void 0;
+	}
+	if (index < 0) {
+		index += len;
+	}
+	return arr[index];
+}
+
+export function last<T>(arr: readonly []): undefined;
+export function last<T>(arr: readonly T[]): T;
+export function last<T>(arr: readonly T[]): T | undefined {
+	return at(arr, -1);
+}
+
+export function first<T>(arr: readonly []): undefined;
+export function first<T>(arr: readonly T[]): T;
+export function first<T>(arr: readonly T[]): T | undefined {
+	return at(arr, 0);
+}
