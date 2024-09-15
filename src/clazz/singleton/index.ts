@@ -41,12 +41,13 @@ export const singleton = (() => {
 	function _createConstructor<T extends Constructor<any, any[]>>(
 		clazz: T,
 		proxy: boolean,
+		fixArgs: any[],
 	): Fn<any[], T> {
 		let _instance: T;
 		const params: any[] = [];
 		function _construct(this: any, ...args: any[]) {
 			if (new.target === _construct || this instanceof _construct) {
-				return _construct(...args);
+				return _construct(...fixArgs, ...args);
 			}
 			if (!_instance) {
 				params.push(...args);
@@ -79,7 +80,7 @@ export const singleton = (() => {
 			clazz: T,
 			...params: Params
 		) => {
-			const _construct = _createConstructor(clazz, true);
+			const _construct = _createConstructor(clazz, true, params);
 			return new globalThis.Proxy(
 				clazz as Constructor<
 					InstanceType<T>,
@@ -101,7 +102,7 @@ export const singleton = (() => {
 			clazz: T,
 			...params: Params
 		) => {
-			const _construct = _createConstructor(clazz, false);
+			const _construct = _createConstructor(clazz, false, params);
 			return <Constructor<InstanceType<T>, ExcludeElements<P, Params>>>(
 				class {
 					constructor(...args: any[]) {

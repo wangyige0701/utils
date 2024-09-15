@@ -26,11 +26,11 @@ describe('clazz', () => {
 			constructor(a: number) {}
 		}
 		const a = new A(1);
-		const B = singleton(A);
-		const a1 = new B(2);
-		const a2 = new B(2);
-		const C = a1.constructor as Constructor<typeof A, [number]>;
-		const a3 = new C(2);
+		const B = singleton(A, 5);
+		const a1 = new B();
+		const a2 = new B();
+		const C = a1.constructor as Constructor<typeof A>;
+		const a3 = new C();
 
 		expect(a === a1).toBe(false);
 		expect(a1 === a2).toBe(true);
