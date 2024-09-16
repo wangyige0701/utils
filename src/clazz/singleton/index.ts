@@ -14,6 +14,7 @@ import { isUndef } from '@/is';
  * and the check rule is only use strict equality to compare.
  * - singleton function can setting the params of the constructor,
  * and the return constructor's params are the rest params of the origin constructor.
+ * @param fixArgs - Fix some params of the constructor when create the singleton instance.
  */
 export const singleton = (() => {
 	let singleton: <
@@ -22,7 +23,7 @@ export const singleton = (() => {
 		Params extends ParamatersOptional<P>,
 	>(
 		clazz: T,
-		...params: Params
+		...fixArgs: Params
 	) => Constructor<InstanceType<T>, ExcludeElements<P, Params>>;
 
 	function paramsCheck(params: any[], args: any[]) {
@@ -78,9 +79,9 @@ export const singleton = (() => {
 			Params extends ParamatersOptional<P>,
 		>(
 			clazz: T,
-			...params: Params
+			...fixArgs: Params
 		) => {
-			const _construct = _createConstructor(clazz, true, params);
+			const _construct = _createConstructor(clazz, true, fixArgs);
 			return new globalThis.Proxy(
 				clazz as Constructor<
 					InstanceType<T>,
@@ -88,7 +89,7 @@ export const singleton = (() => {
 				>,
 				{
 					construct(_, args) {
-						return _construct(...params, ...args);
+						return _construct(...fixArgs, ...args);
 					},
 				},
 			);
@@ -100,13 +101,13 @@ export const singleton = (() => {
 			Params extends ParamatersOptional<P>,
 		>(
 			clazz: T,
-			...params: Params
+			...fixArgs: Params
 		) => {
-			const _construct = _createConstructor(clazz, false, params);
+			const _construct = _createConstructor(clazz, false, fixArgs);
 			return <Constructor<InstanceType<T>, ExcludeElements<P, Params>>>(
 				class {
 					constructor(...args: any[]) {
-						return _construct(...params, ...args);
+						return _construct(...fixArgs, ...args);
 					}
 				}
 			);
