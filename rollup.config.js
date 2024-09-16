@@ -4,8 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
 import typescript from 'rollup-plugin-typescript2';
-
-import decoratorsBundle from './rollup/decorators.bundle.js';
+import del from 'rollup-plugin-delete';
 
 const enteries = ['src/index.ts'];
 
@@ -41,7 +40,7 @@ export default [
 				},
 			],
 			external: [],
-			plugins,
+			plugins: [del({ targets: ['dist/*'] }), ...plugins],
 		};
 		return config;
 	}),
@@ -74,5 +73,4 @@ export default [
 		};
 		return config;
 	}),
-	...decoratorsBundle,
 ];

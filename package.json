@@ -1,6 +1,6 @@
 {
 	"name": "@wang-yige/utils",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"type": "module",
 	"description": "Some utils for JavaScript / TypeScript, collected from daily use",
 	"main": "dist/index.cjs",
@@ -42,6 +42,7 @@
 		"@vitest/coverage-istanbul": "^2.0.5",
 		"prettier": "^3.3.3",
 		"rollup": "^4.21.0",
+		"rollup-plugin-delete": "^2.1.0",
 		"rollup-plugin-dts": "^6.1.1",
 		"rollup-plugin-esbuild": "^6.1.1",
 		"rollup-plugin-typescript2": "^0.36.0",
