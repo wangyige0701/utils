@@ -1,59 +1,59 @@
 import { describe, it, expect } from 'vitest';
-import { rangeIterator, splitStringIterator } from '@/iterator';
+import { range, splitString } from '@/iterator';
 
 describe('Iterator', () => {
-	it('rangeIterator', () => {
+	it('range', () => {
 		{
-			const iterator = rangeIterator(5);
+			const iterator = range(5);
 			const check = [...iterator];
 			expect(check).toEqual([0, 1, 2, 3, 4]);
 		}
 		{
-			const iterator = rangeIterator(0, 10, 2);
+			const iterator = range(0, 10, 2);
 			const check = [...iterator];
 			expect(check).toEqual([0, 2, 4, 6, 8]);
 		}
 		{
-			const iterator = rangeIterator(6, 0, 1);
+			const iterator = range(6, 0, 1);
 			const check = [...iterator];
 			expect(check).toEqual([6, 5, 4, 3, 2, 1]);
 		}
 		{
-			const iterator = rangeIterator(0, -5, 3);
+			const iterator = range(0, -5, 3);
 			const check = [...iterator];
 			console.log(check);
 			expect(check).toEqual([0, -3]);
 		}
 	});
 
-	it('splitStringIterator', () => {
+	it('splitString', () => {
 		{
-			const iterator = splitStringIterator('hello  world', /^\s+$/);
+			const iterator = splitString('hello  world', /^\s+$/);
 			expect(iterator.next()).toEqual({ value: 'hello', done: false });
 			expect(iterator.next()).toEqual({ value: 'world', done: false });
 			expect(iterator.next()).toEqual({ value: undefined, done: true });
 		}
 		{
-			const iterator = splitStringIterator('hello-world', '-');
+			const iterator = splitString('hello-world', '-');
 			expect(iterator.next()).toEqual({ value: 'hello', done: false });
 			expect(iterator.next()).toEqual({ value: 'world', done: false });
 			expect(iterator.next()).toEqual({ value: undefined, done: true });
 		}
 		{
-			const iterator = splitStringIterator('hello---world', /^\-+$/);
+			const iterator = splitString('hello---world', /^\-+$/);
 			expect(iterator.next()).toEqual({ value: 'hello', done: false });
 			expect(iterator.next()).toEqual({ value: 'world', done: false });
 			expect(iterator.next()).toEqual({ value: undefined, done: true });
 		}
 		{
-			const iterator = splitStringIterator('SayHelloWorld', /^([A-Z])$/);
+			const iterator = splitString('SayHelloWorld', /^([A-Z])$/);
 			expect(iterator.next()).toEqual({ value: 'Say', done: false });
 			expect(iterator.next()).toEqual({ value: 'Hello', done: false });
 			expect(iterator.next()).toEqual({ value: 'World', done: false });
 			expect(iterator.next()).toEqual({ value: undefined, done: true });
 		}
 		{
-			const iterator = splitStringIterator('a12b12c234', (s, cb) => {
+			const iterator = splitString('a12b12c234', (s, cb) => {
 				if (s === 'c') {
 					return cb(1);
 				}

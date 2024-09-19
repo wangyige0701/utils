@@ -7,13 +7,13 @@ import { isFunction, isNumber, isRegExp, isString, isUndefined } from '@/is';
  * @param end
  * @param step must be positive
  */
-export function rangeIterator(
+export function range(
 	start: number,
 	end: number,
 	step?: number,
 ): IterableIterator<number>;
-export function rangeIterator(end: number): IterableIterator<number>;
-export function* rangeIterator(start: number, end?: number, step: number = 1) {
+export function range(end: number): IterableIterator<number>;
+export function* range(start: number, end?: number, step: number = 1) {
 	if (isUndefined(end)) {
 		end = start;
 		start = 0;
@@ -37,7 +37,7 @@ export function* rangeIterator(start: number, end?: number, step: number = 1) {
  * the second param is a callback function, which passing the length of match string, and is zero when void.
  * @param cb Call when yield the string
  */
-export function* splitStringIterator<T = string>(
+export function* splitString<T = string>(
 	str: string,
 	use: string | RegExp | Fn<[inner: string, cb: Fn<[num?: number]>]>,
 	cb?: Fn<[s: string], T>,

@@ -1,4 +1,4 @@
-import { splitStringIterator } from '@/iterator';
+import { splitString } from '@/iterator';
 
 export function firstUpperCase<T extends string>(str: T): Capitalize<T> {
 	return (str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<T>;
@@ -23,7 +23,7 @@ export const splitByUpper = (() => {
 	};
 	const b = /^([A-Z])$/;
 	splitByUpper.iterator = (str: string) => {
-		return splitStringIterator(str, b);
+		return splitString(str, b);
 	};
 	return splitByUpper;
 })();
@@ -35,7 +35,7 @@ export const splitBySpace = (() => {
 	};
 	const b = /^\s+$/;
 	splitBySpace.iterator = (str: string) => {
-		return splitStringIterator(str, b);
+		return splitString(str, b);
 	};
 	return splitBySpace;
 })();
@@ -47,7 +47,7 @@ export const splitByUnderscore = (() => {
 	};
 	const b = /^\_+$/;
 	splitByUnderscore.iterator = (str: string) => {
-		return splitStringIterator(str, b);
+		return splitString(str, b);
 	};
 	return splitByUnderscore;
 })();
@@ -59,7 +59,7 @@ export const splitByPoint = (() => {
 	};
 	const b = /^\.+$/;
 	splitByPoint.iterator = (str: string) => {
-		return splitStringIterator(str, b);
+		return splitString(str, b);
 	};
 	return splitByPoint;
 })();
