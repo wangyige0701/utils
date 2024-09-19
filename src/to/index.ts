@@ -1,5 +1,4 @@
-import type { PreElements } from '@/types';
-import { isArray, isBoolean, isObject, isRegExp } from '@/is';
+import { isArray, isBoolean, isObject } from '@/is';
 
 /**
  * Use `JSON.stringify` for object and array,
@@ -42,44 +41,3 @@ export function toArray<T>(val: T | T[]): T[] {
 	}
 	return [val];
 }
-
-/**
- * Merge the inputs to a full regexp, if the length of input upper than one,
- * the last param can be parse to regexp flag
- */
-export const toRegExp = (() => {
-	type Flag = ('g' | 'i' | 'm' | 's' | 'u' | 'y') | {};
-	type Params<T extends Array<string | RegExp>> = T['length'] extends 0
-		? []
-		: T['length'] extends 1
-			? T
-			: [...PreElements<T>, RegExp | Flag];
-
-	const flags = ['g', 'i', 'm', 's', 'u', 'y'];
-	function _parse(rgx: string | RegExp): string {
-		if (isRegExp(rgx)) {
-			const str = rgx.toString();
-			return str.slice(1, str.lastIndexOf('/'));
-		}
-		return rgx.toString();
-	}
-	return function toRegExp<T extends Array<string | RegExp>>(
-		...vals: Params<T>
-	): RegExp {
-		if (vals.length === 0) {
-			return new RegExp('');
-		}
-		const str = vals
-			.map(val => _parse(val as string | RegExp))
-			.filter(Boolean);
-		const flag = str.length > 1 ? str.pop()! : '';
-		if (flag) {
-			if (!flags.includes(flag)) {
-				str.push(flag);
-			} else {
-				return new RegExp(str.join(''), flag);
-			}
-		}
-		return new RegExp(str.join(''));
-	};
-})();
