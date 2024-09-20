@@ -62,4 +62,30 @@ describe('debounce', () => {
 		expect(canc).toBeUndefined();
 		expect(performance.now() - timer).toBeLessThan(300);
 	});
+
+	it('debounce lock of cancel', () => {
+		const result = debounce(test, {
+			fixedArgs: [1, 's', true],
+			delay: 300,
+		});
+		const lock = result();
+		lock.cancel();
+		expect(() => lock.callback(() => {})).toThrowError(
+			/^This debounce target has been canceled$/,
+		);
+	});
+
+	it('use debounce for promise', async () => {
+		const start = performance.now();
+		const result = debounce(test, {
+			fixedArgs: [1, 's', true],
+			delay: 300,
+		});
+		const prom = result().callback(async () => {
+			await delay(1000);
+		});
+		const r = await prom;
+		expect(performance.now() - start).toBeGreaterThanOrEqual(1000);
+		expect(r).toBe(1 + 's' + true);
+	});
 });

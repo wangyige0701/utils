@@ -1,5 +1,11 @@
-import type { ParamatersOptional, ExcludeElements, Fn } from '@/types';
-import { isNumber } from '@/is';
+import type {
+	ParamatersOptional,
+	ExcludeElements,
+	Fn,
+	Awaitable,
+} from '@/types';
+import { isFunction, isNumber } from '@/is';
+import { createPromise } from '@/promise';
 
 type DebounceOptions<Args extends any[]> = {
 	/**
@@ -15,16 +21,18 @@ type DebounceOptions<Args extends any[]> = {
 
 type DebounceConfig<Args extends any[]> = number | DebounceOptions<Args>;
 
-type DebounceResultReturn<R> = {
+type DebounceCallback<R> = Fn<[Awaited<R>], Awaitable<void>>;
+
+type DebounceReturn<R> = Promise<Awaited<R>> & {
 	/**
 	 * If the function is called before the delay, this call will be canceled.
 	 */
 	cancel: Fn;
-	callback: Fn<[Fn<[R]>], DebounceResultReturn<R>>;
+	callback: Fn<[DebounceCallback<R>], DebounceReturn<R>>;
 };
 
-type DebounceResultReturnFn<P extends any[], R> = {
-	(...args: P): DebounceResultReturn<R>;
+type UseDebounce<P extends any[], R> = {
+	(...args: P): DebounceReturn<R>;
 	/**
 	 * Without delay, the function will be called immediately.
 	 */
@@ -36,19 +44,14 @@ type DebounceResult<
 	R extends any,
 	Config extends DebounceConfig<ParamatersOptional<P>>,
 > = Config extends number
-	? DebounceResultReturnFn<P, R>
-	: DebounceResultReturnFn<
-			ExcludeElements<
-				P,
-				// @ts-expect-error
-				Config['fixedArgs'] & {}
-			>,
-			R
-		>;
+	? UseDebounce<P, R>
+	: Config extends DebounceOptions<ParamatersOptional<P>>
+		? UseDebounce<ExcludeElements<P, Config['fixedArgs'] & {}>, R>
+		: never;
 
 /**
  * A debounce function that can be used to limit the rate at which a function is executed.
- * @param func Function to be debounced
+ * @param func Function to be debounced, can be async.
  * @param options When number, it is the delay, and default is 300ms.
  */
 export function debounce<
@@ -82,45 +85,70 @@ export function debounce<
 	}
 	let timer: NodeJS.Timeout | number | null = null;
 	let i = 0;
-	const cancel = () => {
+	const _cancel = () => {
 		if (timer) {
 			clearTimeout(timer);
 		}
-		callbacks.splice(0);
+		callbacks.length = 0;
 	};
-	const callbacks = [] as Fn<[R], void>[];
+	const callbacks = [] as DebounceCallback<R>[];
 	const useDebounce = (...params: any[]) => {
 		let lock = false;
+		// will be compared in cancel function, so use ++i.
 		const index = ++i;
-		cancel();
-		timer = globalThis.setTimeout(() => {
-			const result = useFunc(...(params as P));
-			callbacks.splice(0).forEach(fn => fn(result));
+		_cancel();
+
+		// promise
+		const { promise, resolve } = createPromise<
+			Awaited<R>,
+			DebounceReturn<R>
+		>();
+
+		// logic
+		timer = globalThis.setTimeout(async () => {
+			const result = await useFunc(...(params as P));
+			const funcs = callbacks.splice(0);
+			for (let i = funcs.length - 1; i >= 0; i--) {
+				const fn = funcs[i];
+				await fn?.(result);
+			}
+			resolve(result);
 		}, delay);
-		const _cancel = () => {
+
+		// cancel function
+		const cancel = () => {
 			if (lock) {
-				throw new Error('This debounce target has been canceled');
+				throw new Error(
+					'This debounce target has already been canceled',
+				);
 			}
 			if (index === i) {
-				cancel();
+				_cancel();
 				lock = true;
 			}
 		};
-		const _callback = (fn: Fn<[R], void>) => {
+
+		// callback stack
+		const callback = (fn: DebounceCallback<R>) => {
 			if (lock) {
 				throw new Error('This debounce target has been canceled');
 			}
+			if (!isFunction(fn)) {
+				throw new TypeError('The callback must be a function');
+			}
 			callbacks.push(fn);
-			return result;
+			return promise;
 		};
-		let result = {
-			cancel: _cancel,
-			callback: _callback,
-		};
-		return result;
+
+		// result
+		promise.cancel = cancel;
+		promise.callback = callback;
+		return promise;
 	};
+
+	// use for immediate call.
 	useDebounce.immediate = (...params: any[]) => {
-		cancel();
+		_cancel();
 		return useFunc(...(params as P));
 	};
 	return useDebounce as DebounceResult<P, R, DebounceConfig<Args>>;
