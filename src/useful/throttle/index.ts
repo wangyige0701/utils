@@ -29,13 +29,9 @@ type ThrottleResult<
 	Config extends ThrottleConfig<ParamatersOptional<P>>,
 > = Config extends number
 	? ThrottleResultReturn<P>
-	: ThrottleResultReturn<
-			ExcludeElements<
-				P,
-				// @ts-expect-error
-				Config['fixedArgs'] & {}
-			>
-		>;
+	: Config extends ThrottleOptions<ParamatersOptional<P>>
+		? ThrottleResultReturn<ExcludeElements<P, Config['fixedArgs'] & {}>>
+		: never;
 
 /**
  * To make a function execute at most once in a given time period.

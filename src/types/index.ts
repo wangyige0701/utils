@@ -154,20 +154,20 @@ export type ParamatersOptional<T extends any[], F = T[0]> = T extends []
 
 /**
  * Exclude give array elements from an array, the give array must belong the first paramater.
+ * @param T The array to exclude elements from
+ * @param P The array of elements to exclude
  */
 export type ExcludeElements<
 	T extends any[],
 	P extends ParamatersOptional<T>,
-	A extends any[] = [],
-> = T extends []
+	COLLECT extends any[] = [],
+	REST = T,
+	EXCLUDE extends any[] = P,
+> = REST extends []
 	? []
-	: T extends any[]
-		? A['length'] extends P['length']
-			? T
-			: ExcludeElements<
-					RestElements<T>,
-					// @ts-expect-error
-					P,
-					[...A, T[0]]
-				>
+	: REST extends any[]
+		? COLLECT['length'] extends EXCLUDE['length']
+			? REST
+			: // prettier-ignore
+				ExcludeElements<T, P, [...COLLECT, REST[0]], RestElements<REST>, EXCLUDE>
 		: never;
