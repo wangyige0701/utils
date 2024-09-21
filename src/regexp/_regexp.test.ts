@@ -12,6 +12,9 @@ describe('regexp', () => {
 		expect(toRegExp('/abc/g')).toEqual(/abc/g);
 		expect(toRegExp('/abc/g', 'i')).toEqual(/abc/i);
 		expect(toRegExp(/abc/, 'def', 'g')).toEqual(/abcdef/g);
+		expect(toRegExp(/abc/, 'def', 'gmis')).toEqual(/abcdef/gims);
+		expect(toRegExp('/abc/gmisuy')).toEqual(/abc/gimsuy);
+		expect(toRegExp(/abc/gimsuy)).toEqual(/abc/gimsuy);
 	});
 
 	it('settingFlags', () => {
@@ -24,5 +27,9 @@ describe('regexp', () => {
 		expect(c).toEqual(/abc/m);
 		const d = settingFlags(c, 'u');
 		expect(d).toEqual(/abc/u);
+		const e = settingFlags(reg, true);
+		expect(e).toEqual(/abc/gimsuy);
+		const f = settingFlags(e, false);
+		expect(f).toEqual(/abc/);
 	});
 });
