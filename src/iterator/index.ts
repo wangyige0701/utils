@@ -1,5 +1,6 @@
 import type { Fn } from '@/types';
 import { isFunction, isNumber, isRegExp, isString, isUndefined } from '@/is';
+import { settingFlags, toRegExp } from '@/regexp';
 
 /**
  * Create a range iterator
@@ -33,81 +34,105 @@ export function* range(start: number, end?: number, step: number = 1) {
 
 /**
  * Split string by give rule, and return an iterator
- * @param use A string, regex or a function. When a function is given, the first param is the step string;
- * the second param is a callback function, which passing the length of match string, and is zero when void.
- * @param cb Call when yield the string
+ * @param use A string, regexp or a function.
+ * - String, fully match the string.
+ * - RegExp, will ignore the flags.
+ * - When a function is given, the first param is the string in current index,
+ *  the second param is the currently index, the third param is the origin string,
+ *  the fourth param is a function to collect matched number and whether the matched string will be collected.
+ * @param jump Whether the matched string will be collected, used when use is not a function.
  */
-export function* splitString<T = string>(
+export function* splitString(
 	str: string,
-	use: string | RegExp | Fn<[inner: string, cb: Fn<[num?: number]>]>,
-	cb?: Fn<[s: string], T>,
+	use:
+		| string
+		| RegExp
+		| Fn<
+				[
+					str: string,
+					index: number,
+					origin: string,
+					collect: Fn<[num?: number, jump?: boolean]>,
+				]
+		  >,
+	jump: boolean = true,
 ) {
 	if (!isString(str)) {
 		throw new TypeError('First param must be a string');
 	}
-	function collect(fn: Fn<[string, Fn<[num?: number]>]>) {
-		return (s: string) => {
-			const result = { value: false, number: 0 };
-			fn(s, (num: number = 0) => {
-				result.value = true;
-				result.number = num;
-			});
-			return result;
-		};
-	}
-	let splitBy = use;
-	if (!isFunction(splitBy)) {
-		if (!isString(splitBy) && !isRegExp(splitBy)) {
+	const origin = str;
+	const needJump = jump;
+	let index = 0;
+	let beCollected = false;
+	let colleceted: string = '';
+	const forward = (num?: number, jump: boolean = true) => {
+		if (isUndefined(num)) {
+			num = 1;
+		}
+		if (!isNumber(num)) {
+			throw new TypeError('num must be a number');
+		}
+		beCollected = true;
+		const next = Math.max(1, num);
+		const cut = origin.substring(index, index + num);
+		index += next;
+		if (!jump && cut.length) {
+			colleceted = cut;
+		}
+	};
+	if (!isFunction(use)) {
+		if (!isString(use) && !isRegExp(use)) {
 			throw new TypeError(
 				'Second param must be a string or a RegExp or a function which return value is boolean',
 			);
 		}
-		splitBy = isString(use)
-			? (s: string, cb: Fn<[num?: number]>) => s === use && cb()
-			: (s: string, cb: Fn<[num?: number]>) => {
-					const match = s.match(use as RegExp);
-					match && cb(match[1]?.length);
-				};
+		if (isString(use)) {
+			const matchLength = use.length;
+			const matchStr = use;
+			use = (str, index, origin, collect) => {
+				if (!matchStr.startsWith(str)) {
+					return;
+				}
+				if (origin.substring(index, index + matchLength) !== matchStr) {
+					return;
+				}
+				return collect(matchLength, needJump);
+			};
+		} else {
+			// remove regexp flags
+			const _removeFlag = settingFlags(use, false);
+			const matchRegexp = toRegExp('^(?=(', _removeFlag, '))', '.*');
+			use = (_str, index, origin, collect) => {
+				const result = matchRegexp.exec(origin.substring(index));
+				if (!result) {
+					return;
+				}
+				if (!result[1]?.length) {
+					return;
+				}
+				return collect(result[1].length, needJump);
+			};
+		}
 	}
-	if (!isFunction(cb)) {
-		cb = (s: string) => s as T;
-	}
-	const length = str.length;
-	const check = collect(splitBy);
-	const toCheck = (
-		start: number,
-		end: number,
-		len: number = 0,
-		floor: number = 1,
-	) => {
-		if (end > length) {
-			return false;
-		}
-		const char = str.slice(start, end);
-		const result = check(char);
-		if (result.value) {
-			return toCheck(start, end + 1, result.number, floor + 1);
-		}
-		if (floor > 1) {
-			return [end - 1, len];
-		}
-		return false;
-	};
+	const length = origin.length;
 	let val = '';
-	for (let i = 0; i < length; i++) {
-		const result = toCheck(i, i + 1);
-		if (result === false) {
-			val += str[i];
-			continue;
+	while (index < length) {
+		const str = origin[index];
+		use(str, index, origin, forward);
+		if (beCollected) {
+			const result = val;
+			val = '' + colleceted;
+			beCollected = false;
+			colleceted = '';
+			if (result) {
+				yield result;
+			}
+		} else {
+			val += str;
+			index++;
 		}
-		const [end, len] = result;
-		if (val) {
-			yield cb(val);
-		}
-		val = str.slice(i, i + len);
-		i = end - 1;
 	}
 	if (val) {
-		yield cb(val);
+		yield val;
 	}
 }

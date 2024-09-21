@@ -17,49 +17,49 @@ export function lowerCase<T extends string>(str: T): Lowercase<T> {
 }
 
 export const splitByUpper = (() => {
-	const a = /([A-Z][^A-Z]*)/g;
+	const match = /([A-Z][^A-Z]*)/g;
 	const splitByUpper = (str: string) => {
-		return str.trim().split(a).filter(Boolean);
+		return str.trim().split(match).filter(Boolean);
 	};
-	const b = /^([A-Z])$/;
+	const splitMatch = /[A-Z]/;
 	splitByUpper.iterator = (str: string) => {
-		return splitString(str, b);
+		return splitString(str, splitMatch, false);
 	};
 	return splitByUpper;
 })();
 
 export const splitBySpace = (() => {
-	const a = /\s+/g;
+	const match = /\s+/g;
 	const splitBySpace = (str: string) => {
-		return str.trim().split(a).filter(Boolean);
+		return str.trim().split(match).filter(Boolean);
 	};
-	const b = /^\s+$/;
+	const splitMatch = /\s+/;
 	splitBySpace.iterator = (str: string) => {
-		return splitString(str, b);
+		return splitString(str, splitMatch);
 	};
 	return splitBySpace;
 })();
 
 export const splitByUnderscore = (() => {
-	const a = /\_/g;
+	const match = /\_/g;
 	const splitByUnderscore = (str: string) => {
-		return str.trim().split(a).filter(Boolean);
+		return str.trim().split(match).filter(Boolean);
 	};
-	const b = /^\_+$/;
+	const splitMatch = /\_+/;
 	splitByUnderscore.iterator = (str: string) => {
-		return splitString(str, b);
+		return splitString(str, splitMatch);
 	};
 	return splitByUnderscore;
 })();
 
 export const splitByPoint = (() => {
-	const a = /\./g;
+	const match = /\./g;
 	const splitByPoint = (str: string) => {
-		return str.trim().split(a).filter(Boolean);
+		return str.trim().split(match).filter(Boolean);
 	};
-	const b = /^\.+$/;
+	const splitMatch = /\.+/;
 	splitByPoint.iterator = (str: string) => {
-		return splitString(str, b);
+		return splitString(str, splitMatch);
 	};
 	return splitByPoint;
 })();

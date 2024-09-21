@@ -15,6 +15,7 @@ describe('regexp', () => {
 		expect(toRegExp(/abc/, 'def', 'gmis')).toEqual(/abcdef/gims);
 		expect(toRegExp('/abc/gmisuy')).toEqual(/abc/gimsuy);
 		expect(toRegExp(/abc/gimsuy)).toEqual(/abc/gimsuy);
+		expect(toRegExp('^(?=', /abc/, ')', '$')).toEqual(/^(?=abc)$/);
 	});
 
 	it('settingFlags', () => {
