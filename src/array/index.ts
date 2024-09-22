@@ -1,4 +1,4 @@
-import type { JoinElements } from '@/types';
+import type { ElementOf, Fn, JoinElements } from '@/types';
 import { isNumber, isString } from '@/is';
 
 export const VOID_ARRAY = Object.freeze([]) as [];
@@ -59,4 +59,15 @@ export function first<T>(arr: readonly []): undefined;
 export function first<T>(arr: readonly T[]): T;
 export function first<T>(arr: readonly T[]): T | undefined {
 	return at(arr, 0);
+}
+
+export async function asyncForeach<T extends any[]>(
+	arr: T,
+	fn: Fn<[ElementOf<T>], PromiseLike<any>>,
+) {
+	const result = [];
+	for (const item of arr) {
+		result.push(await fn(item));
+	}
+	return result;
 }

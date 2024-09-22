@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { joinElements, at, last, first } from '@/array';
+import { joinElements, at, last, first, asyncForeach } from '@/array';
+import { delay } from '@/time';
 
 describe('array', () => {
 	it('joinElements', () => {
@@ -28,5 +29,16 @@ describe('array', () => {
 	it('first', () => {
 		expect(first([1, 2, 3])).toBe(1);
 		expect(first([])).toBe(undefined);
+	});
+
+	it('asyncForeach', async () => {
+		const arr = [1, 2, 3];
+		const start = performance.now();
+		const result = await asyncForeach(arr, async item => {
+			await delay(300);
+			return item * 2;
+		});
+		expect(result).toEqual([2, 4, 6]);
+		expect(performance.now() - start).toBeGreaterThanOrEqual(900); // 3 * 300
 	});
 });
