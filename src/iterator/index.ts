@@ -4,8 +4,8 @@ import { settingFlags, toRegExp } from '@/regexp';
 
 /**
  * Create a range iterator
- * @param start
- * @param end
+ * @param start start of range
+ * @param end end of range
  * @param step must be positive
  */
 export function range(

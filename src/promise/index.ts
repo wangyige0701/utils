@@ -16,3 +16,23 @@ export function createPromise<T, R = Promise<T>>() {
 		reject: reject!,
 	};
 }
+
+/**
+ * Extends the promise result or origin value with the given params.
+ * @param value A promiseLike object or other value.
+ * @param params The params which push to the result array.
+ */
+export function extendPromise<P extends any, T extends any[]>(
+	value: P,
+	...params: T
+): Promise<[Awaited<P>, ...T]> {
+	const { promise, resolve, reject } = createPromise<[Awaited<P>, ...T]>();
+	Promise.resolve(value)
+		.then(data => {
+			resolve([data, ...params]);
+		})
+		.catch(err => {
+			reject(err);
+		});
+	return promise;
+}

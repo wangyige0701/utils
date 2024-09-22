@@ -1,6 +1,6 @@
 import { describe, it, expect, expectTypeOf } from 'vitest';
 import type { Fn } from '@/types';
-import { createPromise } from '@/promise';
+import { createPromise, extendPromise } from '@/promise';
 
 describe('promise', () => {
 	it('createPromise', async () => {
@@ -20,5 +20,23 @@ describe('promise', () => {
 		expectTypeOf(promise1).toMatchTypeOf<
 			Promise<string> & { cancel: Fn }
 		>();
+	});
+
+	it('extendPromise', async () => {
+		function prom<T>(v: boolean, n: T) {
+			return new Promise<T>((resolve, reject) => {
+				if (v) {
+					resolve(n);
+				} else {
+					reject(n);
+				}
+			});
+		}
+		const a = extendPromise(prom(true, 1), 2, 3, '4');
+		await expect(a).resolves.toEqual([1, 2, 3, '4']);
+		const b = extendPromise(prom(false, 1), 2, 3, 4);
+		await expect(b).rejects.toBe(1);
+		const c = extendPromise(1, true);
+		await expect(c).resolves.toEqual([1, true]);
 	});
 });
