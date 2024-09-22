@@ -21,7 +21,6 @@ describe('Iterator', () => {
 		{
 			const iterator = range(0, -5, 3);
 			const check = [...iterator];
-			console.log(check);
 			expect(check).toEqual([0, -3]);
 		}
 	});

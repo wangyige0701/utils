@@ -1,6 +1,6 @@
 import type { PreElements } from '@/types';
 import { isBoolean, isRegExp, isString } from '@/is';
-import { objectKeys } from '@/object';
+import { objectKeys } from '@/object/object-keys';
 
 export type RegExpFlag = 'g' | 'i' | 'm' | 's' | 'u' | 'y';
 

@@ -3,6 +3,9 @@ import { isFunction, isNull, isString, isSymbol, isUndefined } from '@/is';
 import { splitByPoint } from '@/string';
 import { toArray } from '@/to';
 
+// objectKeys
+export * from './object-keys';
+
 export const VOID_OBJECT = Object.freeze({}) as {};
 
 /**
@@ -86,15 +89,6 @@ export function getProp(o: object, prop: string) {
 		result = obj;
 	}
 	return result;
-}
-
-/**
- * Use `Object.keys` to get the keys of the object.
- */
-export function objectKeys<T extends object>(o: T) {
-	return Object.keys(
-		o,
-	) as Array<`${keyof T & (string | number | boolean | null | undefined)}`>;
 }
 
 /**
