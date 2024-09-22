@@ -1,5 +1,7 @@
 import type { Awaitable, Fn, PromiseReject, PromiseResolve } from '@/types';
 import { isFunction, isNumber } from '@/is';
+import { createPromise } from '@/promise';
+import { nextTick } from '@/useful';
 
 type Task<T> = Promise<T> & {
 	cancel: Fn;
@@ -64,14 +66,15 @@ export class ParallelTask {
 			throw new Error("'task' must be a function");
 		}
 		const paramaters = [...args];
-		const promise = new Promise<R>((resolve, reject) => {
-			this.#queue.push({ task, paramaters, resolve, reject });
-			this.#execute();
-		});
-		(promise as Task<R>).cancel = () => {
+		const { promise, resolve, reject } = createPromise<R, Task<R>>();
+		this.#queue.push({ task, paramaters, resolve, reject });
+		promise.cancel = () => {
 			this.cancel(task);
 		};
-		return promise as Task<R>;
+		nextTick(() => {
+			this.#execute();
+		});
+		return promise;
 	}
 
 	cancel(task: Fn<any[], Awaitable<any>>) {

@@ -4,23 +4,27 @@ import { ParallelTask } from '@/useful';
 
 describe('ParallelTask', () => {
 	it('use parallelTask', async () => {
-		const time = 300;
-		const max = 5;
-		const i = 9;
-		const now = performance.now();
-		const task = new ParallelTask(3);
-		task.changeMaxParallelCount(max);
-		function use(i: number) {
-			for (let j = 0; j < i; j++) {
-				task.add(delay, time);
+		async function run(time: number, max: number, all: number) {
+			const now = performance.now();
+			const task = new ParallelTask(3);
+			task.changeMaxParallelCount(max);
+			function use(i: number) {
+				for (let j = 0; j < i; j++) {
+					task.add(delay, time);
+				}
+				return new Promise<void>(resolve => {
+					task.onEmpty(resolve);
+				});
 			}
-			return new Promise<void>(resolve => {
-				task.onEmpty(resolve);
-			});
+			await use(all);
+			const end = performance.now();
+			expect(end - now).toBeGreaterThanOrEqual(
+				time * Math.ceil(all / max),
+			);
 		}
-		await use(i);
-		const end = performance.now();
-		console.log(end - now, 'ms');
-		expect(end - now).toBeGreaterThanOrEqual(time * (1 / max));
-	});
+		await run(300, 5, 9);
+		await run(100, 2, 9);
+		await run(200, 5, 4);
+		await run(100, 10, 100);
+	}, 5000);
 });
