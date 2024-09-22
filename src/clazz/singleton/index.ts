@@ -6,6 +6,8 @@ import type {
 } from '@/types';
 import { isUndef } from '@/is';
 
+type Singleton<T, P extends any[]> = Constructor<T, P>;
+
 /**
  * Create a singleton class,
  * the instance of the class which proxy by this function will modify the constructor,
@@ -24,7 +26,7 @@ export const singleton = (() => {
 	>(
 		clazz: T,
 		...fixArgs: Params
-	) => Constructor<InstanceType<T>, ExcludeElements<P, Params>>;
+	) => Singleton<InstanceType<T>, ExcludeElements<P, Params>>;
 
 	function paramsCheck(params: any[], args: any[]) {
 		if (
