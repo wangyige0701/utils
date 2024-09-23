@@ -107,9 +107,9 @@ export function debounce<
 		// logic
 		timer = globalThis.setTimeout(async () => {
 			const result = await useFunc(...(params as P));
-			const funcs = callbacks.splice(0);
-			for (let i = funcs.length - 1; i >= 0; i--) {
-				const fn = funcs[i];
+			const funs = callbacks.splice(0);
+			for (let i = funs.length - 1; i >= 0; i--) {
+				const fn = funs[i];
 				await fn?.(result);
 			}
 			resolve(result);

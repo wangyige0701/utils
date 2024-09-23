@@ -50,10 +50,11 @@ export class ParallelTask {
 		this.#execute();
 	}
 
-	#triggerOnEmpty() {
-		const fns = this.#onEmptyList.splice(0);
-		for (const fn of fns) {
-			fn?.();
+	async #triggerOnEmpty() {
+		const funs = this.#onEmptyList.splice(0);
+		for (let i = funs.length - 1; i >= 0; i--) {
+			const fn = funs[i];
+			await fn?.();
 		}
 	}
 
