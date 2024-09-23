@@ -1,7 +1,7 @@
 import type { Awaitable, Fn, PromiseReject, PromiseResolve } from '@/types';
 import { isFunction, isNumber } from '@/is';
 import { createPromise } from '@/promise';
-import { nextTick } from '@/useful';
+import { nextTick } from '@/useful/nextTick';
 
 type Task<T> = Promise<T> & {
 	cancel: Fn;
