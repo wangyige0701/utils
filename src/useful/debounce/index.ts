@@ -108,7 +108,7 @@ export function debounce<
 		timer = globalThis.setTimeout(async () => {
 			const result = await useFunc(...(params as P));
 			const funs = callbacks.splice(0);
-			for (let i = funs.length - 1; i >= 0; i--) {
+			for (let i = 0; i < funs.length; i++) {
 				const fn = funs[i];
 				await fn?.(result);
 			}
@@ -128,7 +128,7 @@ export function debounce<
 			}
 		};
 
-		// callback stack
+		// callback queue
 		const callback = (fn: DebounceCallback<R>) => {
 			if (lock) {
 				throw new Error('This debounce target has been canceled');

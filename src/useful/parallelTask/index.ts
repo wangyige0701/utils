@@ -10,7 +10,7 @@ type Task<T> = Promise<T> & {
 export class ParallelTask {
 	#maxCount: number;
 	#running: number = 0;
-	#onEmptyList: Array<Fn<[], any>> = [];
+	#emptyExecuteQueue: Array<Fn<[], any>> = [];
 	#queue: Array<{
 		task: Fn<any[], Awaitable<any>>;
 		paramaters: any[];
@@ -51,8 +51,8 @@ export class ParallelTask {
 	}
 
 	async #triggerOnEmpty() {
-		const funs = this.#onEmptyList.splice(0);
-		for (let i = funs.length - 1; i >= 0; i--) {
+		const funs = this.#emptyExecuteQueue.splice(0);
+		for (let i = 0; i < funs.length; i++) {
 			const fn = funs[i];
 			await fn?.();
 		}
@@ -90,6 +90,6 @@ export class ParallelTask {
 		if (!isFunction(fn)) {
 			throw new Error("'fn' must be a function");
 		}
-		this.#onEmptyList.push(fn);
+		this.#emptyExecuteQueue.push(fn);
 	}
 }
