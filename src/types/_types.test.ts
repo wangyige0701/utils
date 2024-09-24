@@ -25,6 +25,7 @@ import type {
 	ExtractRest,
 	JoinElements,
 	ExcludeElements,
+	Values,
 } from '.';
 
 describe('type check', () => {
@@ -299,5 +300,18 @@ describe('type check', () => {
 		type TestA = [number, string, boolean, '1', 44];
 		type A = ExcludeElements<TestA, [number, string]>;
 		expectTypeOf<[boolean, '1', 44]>().toMatchTypeOf<A>();
+	});
+
+	it('Values', () => {
+		type TestA = { a: number; b: string; c: boolean; d: '1'; e: 44 };
+		type A = Values<TestA>;
+		expectTypeOf<number | string | boolean>().toMatchTypeOf<A>();
+
+		enum TestB {
+			a = 1,
+			b = 'hello',
+		}
+		type B = Values<typeof TestB>;
+		expectTypeOf<TestB.a | TestB.b>().toMatchTypeOf<B>();
 	});
 });

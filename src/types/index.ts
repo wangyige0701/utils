@@ -38,6 +38,8 @@ export type PromiseResolve<T = any> = Fn<[value: T]>;
  */
 export type PromiseReject = Fn<[reason: any]>;
 
+export type Values<T extends object> = T[keyof T];
+
 /**
  * Pick the types for value from an object
  * @example

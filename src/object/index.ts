@@ -1,4 +1,4 @@
-import type { Fn, OmitValues } from '@/types';
+import type { Fn, OmitValues, Values } from '@/types';
 import { isFunction, isNull, isString, isSymbol, isUndefined } from '@/is';
 import { splitByPoint } from '@/string';
 import { toArray } from '@/to';
@@ -102,7 +102,7 @@ export function isKeyOf<T extends object>(o: T, k: any): k is keyof T {
  * Check whether the value is in the enum object,
  * use `Object.values` to get the values of the object.
  */
-export function inEnum(o: object, k: any) {
+export function inEnum<T extends object>(o: T, k: any): k is Values<T> & {} {
 	return Object.values(o).includes(k);
 }
 

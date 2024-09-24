@@ -117,6 +117,12 @@ describe.concurrent('object', () => {
 			expect(inEnum(E, 'a')).toBe(true);
 			expect(inEnum(E, 'b')).toBe(true);
 			expect(inEnum(E, 'A')).toBe(false);
+			const A = E.A as string;
+			if (inEnum(E, A)) {
+				expectTypeOf(A).toMatchTypeOf<E>();
+			} else {
+				expectTypeOf(A).not.toMatchTypeOf<E>();
+			}
 		});
 
 		it('objectPick', () => {
