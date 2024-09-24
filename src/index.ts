@@ -2,6 +2,7 @@ export * from './array';
 export * from './clazz';
 export * from './constants';
 export * from './env';
+export * from './function';
 export * from './functional';
 export * from './is';
 export * from './iterator';
