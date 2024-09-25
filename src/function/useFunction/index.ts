@@ -13,10 +13,10 @@ type UseResult<T extends boolean, R extends any> = T extends true
 
 type Options<A extends boolean = false> = {
 	/**
-	 * Whether the function which has been added in list can still to add.
-	 * - default is `true`
+	 * Whether the function which has been added in list can still be added.
+	 * - default is `false`
 	 */
-	equal?: boolean;
+	only?: boolean;
 	/**
 	 * The function use type
 	 */
@@ -40,7 +40,7 @@ export class UseFunction<
 	R = ReturnType<T>,
 > {
 	#type: UseFunctionType;
-	#equal: boolean;
+	#only: boolean;
 	#once: boolean;
 	#async: boolean;
 	#list: T[] = [];
@@ -50,7 +50,7 @@ export class UseFunction<
 	constructor(type: UseFunctionType | Options<A> = UseFunctionType.QUEUE) {
 		if (isString(type)) {
 			if (inEnum(UseFunctionType, type)) {
-				type = { type, equal: true } as Options<A>;
+				type = { type } as Options<A>;
 			} else {
 				throw new TypeError(
 					`The type ${type} is not in UseFunctionType`,
@@ -58,7 +58,7 @@ export class UseFunction<
 			}
 		}
 		this.#type = type.type || UseFunctionType.QUEUE;
-		this.#equal = type.equal ?? true;
+		this.#only = type.only ?? false;
 		this.#once = type.once ?? false;
 		this.#async = type.async ?? false;
 	}
@@ -99,7 +99,7 @@ export class UseFunction<
 		return this.#list.length;
 	}
 
-	public one(...args: P & any[]): UseResult<A, R> {
+	public next(...args: P & any[]): UseResult<A, R> {
 		return this.#whetherAsync(this.#now!, ...args) as UseResult<A, R>;
 	}
 
@@ -110,13 +110,13 @@ export class UseFunction<
 			return (async () => {
 				while (i < length) {
 					i++;
-					await (this.one as Fn<any[], Promise<R>>)(...args);
+					await (this.next as Fn<any[], Promise<R>>)(...args);
 				}
 			})() as UseResult<A, undefined>;
 		}
 		while (i < length) {
 			i++;
-			this.one(...args);
+			this.next(...args);
 		}
 		return void 0 as UseResult<A, undefined>;
 	}
@@ -129,11 +129,15 @@ export class UseFunction<
 		} else {
 			throw new Error();
 		}
+		this.#directTo();
 	}
 
 	#whetherAsync(fn: T, ...args: P & any[]) {
 		this.#move();
 		this.#directTo();
+		if (this.#once) {
+			this.remove(fn);
+		}
 		if (this.#async) {
 			return (async () => {
 				if (!fn) {
