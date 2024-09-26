@@ -1,11 +1,5 @@
-import { isFunction, isString } from '@/is';
-import { inEnum } from '@/object';
 import type { Fn } from '@/types';
-
-export enum UseFunctionType {
-	STACK = 'stack',
-	QUEUE = 'queue',
-}
+import { isFunction } from '@/is';
 
 type UseResult<T extends boolean, R extends any> = T extends true
 	? Promise<R>
@@ -18,10 +12,6 @@ type Options<A extends boolean = false> = {
 	 */
 	only?: boolean;
 	/**
-	 * The function use type
-	 */
-	type?: UseFunctionType;
-	/**
 	 * Whether the function called once then removed.
 	 * - default is `false`
 	 */
@@ -33,13 +23,15 @@ type Options<A extends boolean = false> = {
 	async?: A;
 };
 
+/**
+ * Collect function and call them by insert order.
+ */
 export class UseFunction<
 	T extends Fn<any[], any>,
 	A extends boolean = false,
 	P = Parameters<T>,
 	R = ReturnType<T>,
 > {
-	#type: UseFunctionType;
 	#only: boolean;
 	#once: boolean;
 	#async: boolean;
@@ -47,24 +39,22 @@ export class UseFunction<
 	#index: number = 0;
 	#now: T | null = null;
 
-	constructor(type: UseFunctionType | Options<A> = UseFunctionType.QUEUE) {
-		if (isString(type)) {
-			if (inEnum(UseFunctionType, type)) {
-				type = { type } as Options<A>;
-			} else {
-				throw new TypeError(
-					`The type ${type} is not in UseFunctionType`,
-				);
-			}
-		}
-		this.#type = type.type || UseFunctionType.QUEUE;
-		this.#only = type.only ?? false;
-		this.#once = type.once ?? false;
-		this.#async = type.async ?? false;
+	constructor(type?: Options<A>) {
+		const { only = false, once = false, async = false } = type || {};
+		this.#only = only;
+		this.#once = once;
+		this.#async = async;
+	}
+
+	public get length() {
+		return this.#list.length;
 	}
 
 	public add(func: T) {
 		if (isFunction(func)) {
+			if (this.#only && this.#list.includes(func)) {
+				throw new Error('This function is already added');
+			}
 			this.#list.push(func);
 			this.#directTo();
 			return this.length;
@@ -79,60 +69,46 @@ export class UseFunction<
 			if (func === this.#now) {
 				this.#directTo();
 			} else {
-				if (
-					this.#type === UseFunctionType.QUEUE &&
-					index <= this.#index
-				) {
+				if (index <= this.#index) {
 					this.#index--;
-				} else if (
-					this.#type === UseFunctionType.STACK &&
-					index >= this.#index
-				) {
-					this.#index++;
 				}
 			}
 		}
 		return this.length;
 	}
 
-	public get length() {
-		return this.#list.length;
-	}
-
-	public next(...args: P & any[]): UseResult<A, R> {
-		return this.#whetherAsync(this.#now!, ...args) as UseResult<A, R>;
+	public use(...args: P & any[]): UseResult<A, R> {
+		if (!this.#now) {
+			throw new Error('Be used function is undefined');
+		}
+		return this.#calledLogic(this.#now!, ...args) as UseResult<A, R>;
 	}
 
 	public all(...args: P & any[]): UseResult<A, undefined> {
+		this.reset();
 		let i = 0;
 		const length = this.length;
 		if (this.#async) {
 			return (async () => {
 				while (i < length) {
 					i++;
-					await (this.next as Fn<any[], Promise<R>>)(...args);
+					await (this.use as Fn<any[], Promise<R>>)(...args);
 				}
 			})() as UseResult<A, undefined>;
 		}
 		while (i < length) {
 			i++;
-			this.next(...args);
+			this.use(...args);
 		}
 		return void 0 as UseResult<A, undefined>;
 	}
 
 	public reset() {
-		if (this.#type === UseFunctionType.QUEUE) {
-			this.#index = 0;
-		} else if (this.#type === UseFunctionType.STACK) {
-			this.#index = this.length - 1;
-		} else {
-			throw new Error();
-		}
+		this.#index = 0;
 		this.#directTo();
 	}
 
-	#whetherAsync(fn: T, ...args: P & any[]) {
+	#calledLogic(fn: T, ...args: P & any[]) {
 		this.#move();
 		this.#directTo();
 		if (this.#once) {
@@ -154,20 +130,10 @@ export class UseFunction<
 	}
 
 	#move() {
-		if (this.#type === UseFunctionType.QUEUE) {
-			if (this.#index >= this.length - 1) {
-				this.#index = 0;
-			} else {
-				this.#index++;
-			}
-		} else if (this.#type === UseFunctionType.STACK) {
-			if (this.#index <= 0) {
-				this.#index = this.length - 1;
-			} else {
-				this.#index--;
-			}
+		if (this.#index >= this.length - 1) {
+			this.#index = 0;
 		} else {
-			throw new Error();
+			this.#index++;
 		}
 		return this.#index;
 	}
