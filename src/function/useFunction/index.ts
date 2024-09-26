@@ -39,8 +39,8 @@ export class UseFunction<
 	#index: number = 0;
 	#now: T | null = null;
 
-	constructor(type?: Options<A>) {
-		const { only = false, once = false, async = false } = type || {};
+	constructor(options?: Options<A>) {
+		const { only = false, once = false, async = false } = options || {};
 		this.#only = only;
 		this.#once = once;
 		this.#async = async;
