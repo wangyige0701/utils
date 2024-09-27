@@ -31,7 +31,7 @@ type DebounceReturn<R> = Promise<Awaited<R>> & {
 	callback: Fn<[DebounceCallback<R>], DebounceReturn<R>>;
 };
 
-type UseDebounce<P extends any[], R> = {
+export type Debounce<P extends any[], R> = {
 	(...args: P): DebounceReturn<R>;
 	/**
 	 * Without delay, the function will be called immediately.
@@ -44,9 +44,9 @@ type DebounceResult<
 	R extends any,
 	Config extends DebounceConfig<ParamatersOptional<P>>,
 > = Config extends number
-	? UseDebounce<P, R>
+	? Debounce<P, R>
 	: Config extends DebounceOptions<ParamatersOptional<P>>
-		? UseDebounce<ExcludeElements<P, Config['fixedArgs'] & {}>, R>
+		? Debounce<ExcludeElements<P, Config['fixedArgs'] & {}>, R>
 		: never;
 
 /**
