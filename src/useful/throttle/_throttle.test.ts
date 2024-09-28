@@ -30,4 +30,24 @@ describe('throttle', () => {
 		result('a', true);
 		expect(i).toBe(2);
 	});
+
+	it('use latest function even if it is called in duration', async () => {
+		let i = 0;
+		function test() {
+			i++;
+		}
+		const result = throttle(test, {
+			duration: 100,
+			alwaysCallLatest: true,
+		});
+		result(); // use
+		await delay(50);
+		result(); // not use
+		await delay(50);
+		result(); // use
+		await delay(50);
+		result(); // after 50 milliseconds, use
+		await delay(150);
+		expect(i).toBe(3);
+	});
 });

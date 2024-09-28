@@ -1,6 +1,7 @@
 import type { ExcludeElements, Fn, ParamatersOptional } from '@/types';
 import { isNumber } from '@/is';
 import { precisionMillisecond } from '@/time';
+import { type Debounce, debounce } from '@/useful/debounce';
 
 type ThrottleOptions<Args extends any[]> = {
 	/**
@@ -12,11 +13,16 @@ type ThrottleOptions<Args extends any[]> = {
 	 * To fixed the arguments of the function.
 	 */
 	fixedArgs?: Args;
+	/**
+	 * If the latest function is used in duration, whether call it after throttle.
+	 * - Default is `false`.
+	 */
+	alwaysCallLatest?: boolean;
 };
 
 type ThrottleConfig<Args extends any[]> = number | ThrottleOptions<Args>;
 
-type ThrottleResultReturn<P extends any[]> = {
+export type Throttle<P extends any[]> = {
 	(...args: P): void;
 	/**
 	 * Immediatate invoke the function, even if the throttle duration is not over.
@@ -28,9 +34,9 @@ type ThrottleResult<
 	P extends any[],
 	Config extends ThrottleConfig<ParamatersOptional<P>>,
 > = Config extends number
-	? ThrottleResultReturn<P>
+	? Throttle<P>
 	: Config extends ThrottleOptions<ParamatersOptional<P>>
-		? ThrottleResultReturn<ExcludeElements<P, Config['fixedArgs'] & {}>>
+		? Throttle<ExcludeElements<P, Config['fixedArgs'] & {}>>
 		: never;
 
 /**
@@ -52,21 +58,38 @@ export function throttle<P extends any[], Args extends ParamatersOptional<P>>(
 	if (isNumber(options)) {
 		options = { duration: options } as ThrottleOptions<Args>;
 	}
-	const { duration = 300, fixedArgs = [] } =
-		(options as ThrottleOptions<Args>) || {};
+	const {
+		duration = 300,
+		fixedArgs = [],
+		alwaysCallLatest = false,
+	} = (options as ThrottleOptions<Args>) || {};
 	let useFunc = func;
 	if (fixedArgs.length) {
 		useFunc = func.bind(null, ...(fixedArgs as any[]));
 	}
+	let latestTime: number | null = null;
 	let current = precisionMillisecond();
 	let i = 0;
+	let _useLatest: Debounce<any[], void>;
+	if (alwaysCallLatest) {
+		_useLatest = debounce((...params: any[]) => {
+			if (latestTime && precisionMillisecond() - latestTime >= duration) {
+				useFunc(...(params as P));
+			}
+		}, duration + 17);
+	}
 	const _call = (time: number, ...p: any[]) => {
+		latestTime = null;
 		i++;
 		current = time;
 		useFunc(...(p as P));
 	};
 	const useThrottle = (...params: any[]) => {
 		const _current = precisionMillisecond();
+		if (alwaysCallLatest) {
+			latestTime = _current;
+			_useLatest && _useLatest(...params);
+		}
 		if (i === 0) {
 			_call(_current, ...params);
 		}
