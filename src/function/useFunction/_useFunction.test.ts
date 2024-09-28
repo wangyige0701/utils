@@ -82,6 +82,8 @@ describe('useFunction', () => {
 		await b.all();
 		expect(i).toBe(10);
 		expect(performance.now() - start).toBeGreaterThanOrEqual(1500);
+		a.all();
+		expect(i).toBe(15);
 	});
 
 	it('should used with remove func', () => {

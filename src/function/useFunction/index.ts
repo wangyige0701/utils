@@ -24,7 +24,7 @@ type Options<A extends boolean = false> = {
 };
 
 /**
- * Collect function and call them by insert order.
+ * Collect functions and circulate called them by insert order.
  */
 export class UseFunction<
 	T extends Fn<any[], any>,
@@ -37,7 +37,7 @@ export class UseFunction<
 	#async: boolean;
 	#list: T[] = [];
 	#index: number = 0;
-	#now: T | null = null;
+	#current: T | null = null;
 
 	constructor(options?: Options<A>) {
 		const { only = false, once = false, async = false } = options || {};
@@ -53,7 +53,7 @@ export class UseFunction<
 	public add(func: T) {
 		if (isFunction(func)) {
 			if (this.#only && this.#list.includes(func)) {
-				throw new Error('This function is already added');
+				throw new Error('This function is already be added');
 			}
 			this.#list.push(func);
 			this.#directTo();
@@ -66,7 +66,7 @@ export class UseFunction<
 		if (isFunction(func) && this.#list.includes(func)) {
 			const index = this.#list.findIndex(i => i === func);
 			this.#list.splice(index, 1);
-			if (func === this.#now) {
+			if (func === this.#current) {
 				this.#directTo();
 			} else {
 				if (index <= this.#index) {
@@ -78,10 +78,10 @@ export class UseFunction<
 	}
 
 	public use(...args: P & any[]): UseResult<A, R> {
-		if (!this.#now) {
+		if (!this.#current) {
 			throw new Error('Be used function is undefined');
 		}
-		return this.#calledLogic(this.#now!, ...args) as UseResult<A, R>;
+		return this.#called(this.#current!, ...args) as UseResult<A, R>;
 	}
 
 	public all(...args: P & any[]): UseResult<A, undefined> {
@@ -108,8 +108,8 @@ export class UseFunction<
 		this.#directTo();
 	}
 
-	#calledLogic(fn: T, ...args: P & any[]) {
-		this.#move();
+	#called(fn: T, ...args: P & any[]) {
+		this.#next();
 		this.#directTo();
 		if (this.#once) {
 			this.remove(fn);
@@ -129,7 +129,7 @@ export class UseFunction<
 		return fn(...args) as R;
 	}
 
-	#move() {
+	#next() {
 		if (this.#index >= this.length - 1) {
 			this.#index = 0;
 		} else {
@@ -142,16 +142,16 @@ export class UseFunction<
 		const now = this.#list[this.#index];
 		if (!now) {
 			if (this.length) {
-				this.#move();
+				this.#next();
 				return this.#directTo();
 			}
-			this.#now = null;
+			this.#current = null;
 		} else {
-			if (now === this.#now) {
-				return this.#now;
+			if (now === this.#current) {
+				return this.#current;
 			}
-			this.#now = now;
+			this.#current = now;
 		}
-		return this.#now;
+		return this.#current;
 	}
 }
