@@ -86,9 +86,16 @@ export function isPromiseLike<T = any>(val: any): val is PromiseLike<T> {
 }
 
 export const isInteger = (() => {
-	const fn = Number.isInteger;
-	if (fn) {
-		return fn;
+	if (isDef(Number.isInteger)) {
+		return Number.isInteger;
+	}
+	if (isDef(Number.isFinite)) {
+		return function isInteger<T>(number: T): boolean {
+			return (
+				Number.isFinite(number) &&
+				Math.floor(number as number) === number
+			);
+		};
 	}
 	return function isInteger<T>(number: T): boolean {
 		return (
