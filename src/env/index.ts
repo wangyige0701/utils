@@ -23,12 +23,15 @@ export const languageInfo = (() => {
 /**
  * Get the global object both in node and browser.
  * - default is `globalThis`.
- * - if `globalThis` is not defined, use `global`.
+ * - if `globalThis` is not defined, use `self`.
+ * - if `self` is not defined, use `global`.
  * - if `global` is not defined, use `window`.
  */
-export const globalVar = (() => {
+export const globals = (() => {
 	if (typeof globalThis !== 'undefined') {
 		return globalThis;
+	} else if (typeof self !== 'undefined') {
+		return self;
 	} else if (typeof global !== 'undefined') {
 		return global;
 	}

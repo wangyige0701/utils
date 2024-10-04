@@ -6,7 +6,7 @@ import type {
 } from '@/types';
 import { isFunction, isNumber } from '@/is';
 import { createPromise } from '@/promise';
-import { globalVar } from '@/env';
+import { globals } from '@/env';
 
 type DebounceOptions<Args extends any[]> = {
 	/**
@@ -106,7 +106,7 @@ export function debounce<
 		>();
 
 		// logic
-		timer = globalVar.setTimeout(async () => {
+		timer = globals.setTimeout(async () => {
 			const result = await useFunc(...(params as P));
 			const funs = callbacks.splice(0);
 			for (let i = 0; i < funs.length; i++) {
