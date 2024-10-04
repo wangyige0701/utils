@@ -4,7 +4,7 @@ import type {
 	Fn,
 	ParamatersOptional,
 } from '@/types';
-import { isDef } from '@/is';
+import { isDef, isFunction } from '@/is';
 import { globals } from '@/env';
 
 type Singleton<T, P extends any[]> = Constructor<T, P>;
@@ -64,7 +64,12 @@ export const singleton = (() => {
 							if (p === 'constructor') {
 								return _construct;
 							}
-							return Reflect.get(target, p);
+							const result = Reflect.get(target, p);
+							if (isFunction(result)) {
+								return (...args: any[]) =>
+									result.apply(target, args);
+							}
+							return result;
 						},
 					});
 				}
