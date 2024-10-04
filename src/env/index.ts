@@ -32,8 +32,10 @@ export const globals = (() => {
 		return globalThis;
 	} else if (typeof self !== 'undefined') {
 		return self;
+	} else if (typeof window !== 'undefined') {
+		return window;
 	} else if (typeof global !== 'undefined') {
 		return global;
 	}
-	return window;
+	return {} as unknown as typeof globalThis;
 })();
