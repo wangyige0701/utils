@@ -4,7 +4,8 @@ import type {
 	Fn,
 	ParamatersOptional,
 } from '@/types';
-import { isUndef } from '@/is';
+import { isDef } from '@/is';
+import { globals } from '@/env';
 
 type Singleton<T, P extends any[]> = Constructor<T, P>;
 
@@ -58,7 +59,7 @@ export const singleton = (() => {
 					_instance = new clazz(...args);
 					_instance.constructor = _construct;
 				} else {
-					_instance = new globalThis.Proxy(new clazz(...args), {
+					_instance = new globals.Proxy(new clazz(...args), {
 						get(target, p) {
 							if (p === 'constructor') {
 								return _construct;
@@ -74,7 +75,7 @@ export const singleton = (() => {
 		return _construct;
 	}
 
-	if (isUndef(globalThis.Proxy)) {
+	if (isDef(globals.Proxy)) {
 		singleton = <
 			T extends Constructor<any, any[]>,
 			P extends ConstructorParameters<T>,
@@ -84,7 +85,7 @@ export const singleton = (() => {
 			...fixArgs: Params
 		) => {
 			const _construct = _createConstructor(clazz, true, fixArgs);
-			return new globalThis.Proxy(
+			return new globals.Proxy(
 				clazz as Constructor<
 					InstanceType<T>,
 					ExcludeElements<P, Params>

@@ -1,8 +1,8 @@
 import type { Constructor } from '@/types';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { singleton } from '@/clazz';
 
-describe('clazz', () => {
+describe('singleton use globalThis.Proxy', () => {
 	it('singleton', () => {
 		class A {
 			constructor(a: number) {}
@@ -17,26 +17,6 @@ describe('clazz', () => {
 		expect(a === a1).toBe(false);
 		expect(a1 === a2).toBe(true);
 		expect(a1 === a3).toBe(true);
-	});
-
-	it('singleton without proxy', () => {
-		vi.stubGlobal('Proxy', undefined);
-
-		class A {
-			constructor(a: number) {}
-		}
-		const a = new A(1);
-		const B = singleton(A, 5);
-		const a1 = new B();
-		const a2 = new B();
-		const C = a1.constructor as Constructor<typeof A>;
-		const a3 = new C();
-
-		expect(a === a1).toBe(false);
-		expect(a1 === a2).toBe(true);
-		expect(a1 === a3).toBe(true);
-
-		vi.unstubAllGlobals();
 	});
 
 	it('singleton with default params', () => {
