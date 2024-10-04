@@ -5,6 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
 import typescript from 'rollup-plugin-typescript2';
 import del from 'rollup-plugin-delete';
+import terser from '@rollup/plugin-terser';
 
 const enteries = ['src/index.ts'];
 
@@ -70,6 +71,29 @@ export default [
 			],
 			external: [],
 			plugins: [typescript(), dts({ respectExternal: true })],
+		};
+		return config;
+	}),
+	...enteries.map(input => {
+		/** @type {import('rollup').RollupOptions} */
+		const config = {
+			input,
+			output: {
+				name: '$wyg',
+				file: 'dist/wang-yige.utils.min.js',
+				format: 'iife',
+			},
+			plugins: [
+				...plugins,
+				terser({
+					module: false,
+					compress: {
+						ecma: 2015,
+						pure_getters: true,
+					},
+					safari10: true,
+				}),
+			],
 		};
 		return config;
 	}),

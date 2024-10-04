@@ -38,6 +38,7 @@
 		"@rollup/plugin-alias": "^5.1.0",
 		"@rollup/plugin-commonjs": "^26.0.1",
 		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-terser": "^0.4.4",
 		"@types/node": "^22.4.2",
 		"@vitest/coverage-istanbul": "^2.0.5",
 		"prettier": "^3.3.3",
