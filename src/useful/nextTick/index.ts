@@ -1,5 +1,6 @@
 import type { Fn } from '@/types';
 import { isDef, isFunction } from '@/is';
+import { globalVar } from '@/env';
 
 export const nextTick = (() => {
 	let pending: boolean = false;
@@ -14,31 +15,31 @@ export const nextTick = (() => {
 		}
 	}
 
-	if (isDef(globalThis.process) && isFunction(globalThis.process.nextTick)) {
+	if (isDef(globalVar.process) && isFunction(globalVar.process.nextTick)) {
 		_use = () => {
-			globalThis.process.nextTick(flushTasks);
+			globalVar.process.nextTick(flushTasks);
 		};
-	} else if (isFunction(globalThis.Promise)) {
-		const _resolve = globalThis.Promise.resolve();
+	} else if (isFunction(globalVar.Promise)) {
+		const _resolve = globalVar.Promise.resolve();
 		_use = () => {
 			_resolve.then(flushTasks);
 		};
-	} else if (isFunction(globalThis.MutationObserver)) {
+	} else if (isFunction(globalVar.MutationObserver)) {
 		let counter = 1;
-		const _ob = new globalThis.MutationObserver(flushTasks);
+		const _ob = new globalVar.MutationObserver(flushTasks);
 		const _node = document.createTextNode(String(counter));
 		_ob.observe(_node, { characterData: true });
 		_use = () => {
 			counter = (counter + 1) % 2;
 			_node.data = String(counter);
 		};
-	} else if (isFunction(globalThis.setImmediate)) {
+	} else if (isFunction(globalVar.setImmediate)) {
 		_use = () => {
-			globalThis.setImmediate(flushTasks);
+			globalVar.setImmediate(flushTasks);
 		};
 	} else {
 		_use = () => {
-			globalThis.setTimeout(flushTasks, 0);
+			globalVar.setTimeout(flushTasks, 0);
 		};
 	}
 

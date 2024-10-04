@@ -1,5 +1,6 @@
 import type { Fn } from '@/types';
 import { isDef, isNumber } from '@/is';
+import { globalVar } from '@/env';
 
 export function delay(time: number, cb?: Fn<[], any>) {
 	if (!isNumber(time)) {
@@ -9,7 +10,7 @@ export function delay(time: number, cb?: Fn<[], any>) {
 		throw new Error('The delay time must be a positive number');
 	}
 	return new Promise<void>(resolve => {
-		globalThis.setTimeout(async () => {
+		globalVar.setTimeout(async () => {
 			await cb?.();
 			resolve();
 		}, time);
@@ -21,8 +22,8 @@ export function delay(time: number, cb?: Fn<[], any>) {
  * if both are not available, use `new Date().getTime()`
  */
 export const precisionMillisecond = (() => {
-	if (isDef(globalThis.performance)) {
-		return () => globalThis.performance.now();
+	if (isDef(globalVar.performance)) {
+		return () => globalVar.performance.now();
 	} else if (isDef(Date.now)) {
 		return () => Date.now();
 	} else {

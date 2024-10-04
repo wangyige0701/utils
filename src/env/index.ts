@@ -1,4 +1,5 @@
 import { singleton } from '@/clazz';
+import { isDef } from '@/is';
 
 /**
  * Get the environment variable, default is `zh-CN`,
@@ -10,8 +11,8 @@ export const languageInfo = (() => {
 			#env = 'zh-CN';
 
 			constructor() {
-				if (globalThis.navigator) {
-					this.#env = globalThis.navigator.language;
+				if (window && window.navigator) {
+					this.#env = window.navigator.language;
 				}
 			}
 
@@ -29,4 +30,19 @@ export const languageInfo = (() => {
 		},
 	);
 	return new i();
+})();
+
+/**
+ * Get the global object both in node and browser.
+ * - default is `globalThis`.
+ * - if `globalThis` is not defined, use `global`.
+ * - if `global` is not defined, use `window`.
+ */
+export const globalVar = (() => {
+	if (isDef(globalThis)) {
+		return globalThis;
+	} else if (isDef(global)) {
+		return global;
+	}
+	return window;
 })();
