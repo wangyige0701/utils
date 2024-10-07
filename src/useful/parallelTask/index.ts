@@ -7,6 +7,13 @@ type Task<T> = Promise<T> & {
 	cancel: Fn;
 };
 
+export type ParallelTaskResult<T> = Task<T>;
+
+/**
+ * Control multiple tasks execute a given quantity at the same time.
+ * @param count The maximum number of tasks that can be executed at the same time.
+ * - Must be greater than 0.
+ */
 export class ParallelTask {
 	#maxCount: number;
 	#running: number = 0;
