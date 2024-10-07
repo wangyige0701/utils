@@ -1,5 +1,10 @@
 import type { Fn } from '@/types';
 
+/**
+ * Give some tasks and execute them in order, the results will be returned in an array.
+ * The tasks can be paused and started at any time in the execution.
+ * @returns {Promise<any[]>} A promise that resolve when all tasks are done.
+ */
 export class ProcessTask<T extends Fn<[], any>> {
 	#tasks: T[] = [];
 	#result: any[] = [];
