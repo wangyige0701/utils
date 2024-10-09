@@ -7,7 +7,11 @@ import type {
 import { isDef, isFunction } from '@/is';
 import { globals } from '@/env';
 
-type Singleton<T, P extends any[]> = Constructor<T, P>;
+type Singleton<
+	T extends Constructor<any, any[]>,
+	P extends ConstructorParameters<T>,
+	Params extends ParamatersOptional<P>,
+> = Params['length'] extends 0 ? T : Constructor<T, ExcludeElements<P, Params>>;
 
 /**
  * Create a singleton class,
@@ -27,7 +31,7 @@ export const singleton = (() => {
 	>(
 		clazz: T,
 		...fixArgs: Params
-	) => Singleton<InstanceType<T>, ExcludeElements<P, Params>>;
+	) => Singleton<T, P, Params>;
 
 	function paramsCheck(params: any[], args: any[]) {
 		if (
@@ -90,17 +94,11 @@ export const singleton = (() => {
 			...fixArgs: Params
 		) => {
 			const _construct = _createConstructor(clazz, true, fixArgs);
-			return new globals.Proxy(
-				clazz as Constructor<
-					InstanceType<T>,
-					ExcludeElements<P, Params>
-				>,
-				{
-					construct(_, args) {
-						return _construct(...fixArgs, ...args);
-					},
+			return new globals.Proxy(clazz as Singleton<T, P, Params>, {
+				construct(_, args) {
+					return _construct(...fixArgs, ...args);
 				},
-			);
+			});
 		};
 	} else {
 		singleton = <
@@ -112,13 +110,11 @@ export const singleton = (() => {
 			...fixArgs: Params
 		) => {
 			const _construct = _createConstructor(clazz, false, fixArgs);
-			return <Constructor<InstanceType<T>, ExcludeElements<P, Params>>>(
-				class {
-					constructor(...args: any[]) {
-						return _construct(...fixArgs, ...args);
-					}
+			return <Singleton<T, P, Params>>class {
+				constructor(...args: any[]) {
+					return _construct(...fixArgs, ...args);
 				}
-			);
+			};
 		};
 	}
 
