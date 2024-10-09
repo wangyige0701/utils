@@ -11,7 +11,9 @@ type Singleton<
 	T extends Constructor<any, any[]>,
 	P extends ConstructorParameters<T>,
 	Params extends ParamatersOptional<P>,
-> = Params['length'] extends 0 ? T : Constructor<T, ExcludeElements<P, Params>>;
+> = Params['length'] extends 0
+	? T
+	: Constructor<InstanceType<T>, ExcludeElements<P, Params>>;
 
 /**
  * Create a singleton class,
