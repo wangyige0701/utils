@@ -1,5 +1,5 @@
 import type { Constructor } from '@/types';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, expectTypeOf } from 'vitest';
 import { singleton } from '@/clazz';
 
 describe('singleton use globalThis.Proxy', () => {
@@ -29,16 +29,22 @@ describe('singleton use globalThis.Proxy', () => {
 		expect(a1.data).toBe(2);
 		expect(a2.data).toBe(2);
 		expect(a3.use()).toBe(2);
+		expectTypeOf(a1).toMatchTypeOf<A>();
+		expectTypeOf(a2).toMatchTypeOf<A>();
+		expectTypeOf(a3).toMatchTypeOf<A>();
 	});
 
 	it('singleton with default params', () => {
 		class A {
 			constructor(a: number, b: string = 'hello') {}
+			use() {}
 		}
 		const ASingleton = singleton(A, 2);
 		const a1 = new ASingleton('s');
 		const a2 = new ASingleton('s');
 
 		expect(a1 === a2).toBe(true);
+		expectTypeOf(a1).toMatchTypeOf<A>();
+		expectTypeOf(a2).toMatchTypeOf<A>();
 	});
 });
