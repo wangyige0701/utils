@@ -17,7 +17,7 @@ export type ParallelTaskResult<T> = Task<T>;
 export class ParallelTask {
 	#maxCount: number;
 	#running: number = 0;
-	#emptyExecuteQueue: Array<Fn<[], any>> = [];
+	#emptyExecuteQueue: Array<{ fn: Fn<[], any>; once: boolean }> = [];
 	#queue: Array<{
 		task: Fn<any[], Awaitable<any>>;
 		paramaters: any[];
@@ -57,11 +57,18 @@ export class ParallelTask {
 		this.#execute();
 	}
 
-	async #triggerOnEmpty() {
-		const funs = this.#emptyExecuteQueue.splice(0);
+	#triggerOnEmpty() {
+		const funs = this.#emptyExecuteQueue.slice(0);
 		for (let i = 0; i < funs.length; i++) {
-			const fn = funs[i];
-			await fn?.();
+			const func = funs[i];
+			const { fn, once = true } = func;
+			if (once) {
+				this.#emptyExecuteQueue.splice(
+					this.#emptyExecuteQueue.indexOf(func),
+					1,
+				);
+			}
+			fn?.();
 		}
 	}
 
@@ -93,10 +100,15 @@ export class ParallelTask {
 		}
 	}
 
-	onEmpty(fn: Fn<[], any>) {
+	/**
+	 * Execute when the queue is empty.
+	 * @param {boolean} once Whether execute once when task empty.
+	 * - Default is true.
+	 */
+	onEmpty(fn: Fn<[], any>, once: boolean = true) {
 		if (!isFunction(fn)) {
-			throw new Error("'fn' must be a function");
+			throw new TypeError('The param pass in must be a function');
 		}
-		this.#emptyExecuteQueue.push(fn);
+		this.#emptyExecuteQueue.push({ fn, once });
 	}
 }
