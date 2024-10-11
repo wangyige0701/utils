@@ -88,7 +88,7 @@ export function debounce<
 	let i = 0;
 	const _cancel = () => {
 		if (timer) {
-			clearTimeout(timer);
+			getGlobal().clearTimeout(timer);
 		}
 		callbacks.length = 0;
 	};
