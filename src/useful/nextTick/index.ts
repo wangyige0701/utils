@@ -1,6 +1,6 @@
 import type { Fn } from '@/types';
 import { isDef, isFunction } from '@/is';
-import { globals } from '@/env';
+import { getGlobal } from '@/env';
 
 export const nextTick = (() => {
 	let pending: boolean = false;
@@ -15,31 +15,34 @@ export const nextTick = (() => {
 		}
 	}
 
-	if (isDef(globals.process) && isFunction(globals.process.nextTick)) {
+	if (
+		isDef(getGlobal().process) &&
+		isFunction(getGlobal().process.nextTick)
+	) {
 		_use = () => {
-			globals.process.nextTick(flushTasks);
+			getGlobal().process.nextTick(flushTasks);
 		};
-	} else if (isFunction(globals.Promise)) {
-		const _resolve = globals.Promise.resolve();
+	} else if (isFunction(getGlobal().Promise)) {
+		const _resolve = getGlobal().Promise.resolve();
 		_use = () => {
 			_resolve.then(flushTasks);
 		};
-	} else if (isFunction(globals.MutationObserver)) {
+	} else if (isFunction(getGlobal().MutationObserver)) {
 		let counter = 1;
-		const _ob = new globals.MutationObserver(flushTasks);
+		const _ob = new (getGlobal().MutationObserver)(flushTasks);
 		const _node = document.createTextNode(String(counter));
 		_ob.observe(_node, { characterData: true });
 		_use = () => {
 			counter = (counter + 1) % 2;
 			_node.data = String(counter);
 		};
-	} else if (isFunction(globals.setImmediate)) {
+	} else if (isFunction(getGlobal().setImmediate)) {
 		_use = () => {
-			globals.setImmediate(flushTasks);
+			getGlobal().setImmediate(flushTasks);
 		};
 	} else {
 		_use = () => {
-			globals.setTimeout(flushTasks, 0);
+			getGlobal().setTimeout(flushTasks, 0);
 		};
 	}
 
