@@ -1,21 +1,23 @@
 /**
- * Get the environment variable, default is `zh-CN`,
- * in chrome will use `navigator.language` to get the language in setting.
+ * - If environment has `navigotor.language` property, the result will return it.
+ * - Otherwise, the result will use custom variable.
+ * - Default value is `zh-CN`.
  */
-export const languageInfo = (() => {
+export const language = (() => {
 	let env = 'zh-CN';
-	if (typeof window !== 'undefined' && window.navigator) {
-		env = window.navigator.language;
+	const hasNavigator = typeof window !== 'undefined' && window.navigator;
+	let getEnv = () => env;
+	if (hasNavigator) {
+		getEnv = () => window.navigator.language;
 	}
 	return {
-		get value() {
-			return env;
-		},
 		get() {
-			return env;
+			return getEnv();
 		},
 		set(value: string) {
-			env = value;
+			if (!hasNavigator) {
+				env = value;
+			}
 		},
 	};
 })();
