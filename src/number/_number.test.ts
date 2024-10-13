@@ -4,7 +4,7 @@ import {
 	validNumber,
 	inRange,
 	clamp,
-	rangeRandom,
+	randomInteger,
 	matchNumber,
 } from '@/number';
 
@@ -45,12 +45,12 @@ describe('number', () => {
 		);
 	});
 
-	it('rangeRandom', () => {
-		function check(...opts: Parameters<typeof rangeRandom>) {
+	it('randomInteger', () => {
+		function check(...opts: Parameters<typeof randomInteger>) {
 			const [min, max, options] = opts;
 			const { includeMax = true, includeMin = true } = options || {};
 			for (let i = 0; i < 100; i++) {
-				const num = rangeRandom(min, max, options);
+				const num = randomInteger(min, max, options);
 				if (includeMin) {
 					expect(num).toBeGreaterThanOrEqual(min);
 				} else {

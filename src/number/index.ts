@@ -70,17 +70,17 @@ type RangeOption = InRangeOption;
 /**
  * Get a random integer number between min and max
  */
-export function rangeRandom(min: number, max: number, options?: RangeOption) {
+export function randomInteger(min: number, max: number, options?: RangeOption) {
 	if (min > max) {
 		throw new Error('min should be less than max');
 	}
 	const { includeMin = true, includeMax = true } = options || {};
 	const value = Math.floor(Math.random() * (max - min + 1)) + min;
 	if (!includeMin && value === min) {
-		return rangeRandom(min, max, options);
+		return randomInteger(min, max, options);
 	}
 	if (!includeMax && value === max) {
-		return rangeRandom(min, max, options);
+		return randomInteger(min, max, options);
 	}
 	return value;
 }
