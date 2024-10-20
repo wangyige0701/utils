@@ -63,3 +63,31 @@ export const splitByPoint = (() => {
 	};
 	return splitByPoint;
 })();
+
+/**
+ * Create a random string of the specified length.
+ */
+export const randomString = (() => {
+	const range = [
+		{ start: 97, end: 122, len: 122 - 97 + 1 },
+		{ start: 65, end: 90, len: 90 - 65 + 1 },
+		{ start: 48, end: 57, len: 57 - 48 + 1 },
+	] as const;
+	const cache: string[] = [];
+	const _i = (length: number) => {
+		return (Math.random() * length) | 0;
+	};
+	const create = (length: number) => {
+		let str = '';
+		while (length-- > 0) {
+			const _v = range[_i(range.length)];
+			str += String.fromCharCode(_v.start + _i(_v.len));
+		}
+		if (cache.includes(str)) {
+			return create(length);
+		}
+		cache.push(str);
+		return str;
+	};
+	return create;
+})();
