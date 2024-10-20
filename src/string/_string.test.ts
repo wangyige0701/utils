@@ -8,6 +8,7 @@ import {
 	splitBySpace,
 	splitByUnderscore,
 	splitByPoint,
+	randomString,
 } from '@/string';
 
 describe('string', () => {
@@ -61,5 +62,13 @@ describe('string', () => {
 		expect(iterator.next().value).toBe('Hello');
 		expect(iterator.next().value).toBe('World');
 		expect(iterator.next().done).toBe(true);
+	});
+
+	it('randomString', () => {
+		const a = randomString(10);
+		const b = randomString(10);
+		expect(a.length).toBe(10);
+		expect(b.length).toBe(10);
+		expect(a).not.toBe(b);
 	});
 });
