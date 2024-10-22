@@ -53,4 +53,33 @@ describe('ParallelTask', () => {
 		expect(i).toBe(2);
 		expect(j).toBe(2);
 	});
+
+	it('cancel', async () => {
+		const task = new ParallelTask(2);
+		let i = 0;
+		const func = async () => {
+			await delay(100);
+			i++;
+		};
+		await task.add(func);
+		await task.add(func);
+		const use1 = task.add(func);
+		const use2 = task.add(func);
+		use1.cancel();
+		task.cancel(use2.index);
+		expect(i).toBe(2);
+	});
+
+	it('is executed', async () => {
+		const task = new ParallelTask(1);
+		task.add(delay, 1500);
+		const use1 = task.add(delay, 500);
+		expect(task.isPending(use1.index)).toBe(true);
+		const use2 = task.add(delay, 100);
+		use2.cancel();
+		expect(task.isPending(use2.index)).toBe(false);
+		const use3 = task.add(delay, 100);
+		await use3;
+		expect(task.isPending(use3.index)).toBe(false);
+	});
 });

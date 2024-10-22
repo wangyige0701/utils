@@ -5,6 +5,7 @@ import { nextTick } from '@/useful/nextTick';
 
 type Task<T> = Promise<T> & {
 	cancel: Fn;
+	index: number;
 };
 
 export type ParallelTaskResult<T> = Task<T>;
@@ -15,6 +16,7 @@ export type ParallelTaskResult<T> = Task<T>;
  * - Must be greater than 0.
  */
 export class ParallelTask {
+	#index = 0;
 	#maxCount: number;
 	#running: number = 0;
 	#emptyExecuteQueue: Array<{ fn: Fn<[], any>; once: boolean }> = [];
@@ -23,14 +25,15 @@ export class ParallelTask {
 		paramaters: any[];
 		resolve: PromiseResolve;
 		reject: PromiseReject;
+		index: number;
 	}> = [];
 
 	constructor(count: number = 3) {
 		if (!isNumber(count)) {
-			throw new Error("'total' must be a number");
+			throw new Error('`total` must be a number');
 		}
 		if (count <= 0) {
-			throw new Error("'total' must be greater than 0");
+			throw new Error('`total` must be greater than 0');
 		}
 		this.#maxCount = count;
 	}
@@ -72,19 +75,34 @@ export class ParallelTask {
 		}
 	}
 
+	/**
+	 * Change the maximum number of parallel tasks.
+	 */
 	changeMaxParallelCount(count: number) {
 		this.#maxCount = count;
 	}
 
+	/**
+	 * Add a task to the queue, and the rest params will be passed in the task.
+	 * @returns A promise with a cancel method and the index of the task.
+	 */
 	add<P extends any[], R>(task: Fn<P, Awaitable<R>>, ...args: P): Task<R> {
 		if (!isFunction(task)) {
-			throw new Error("'task' must be a function");
+			throw new Error('`task` must be a function');
 		}
+		const index = this.#index++;
 		const paramaters = [...args];
 		const { promise, resolve, reject } = createPromise<R, Task<R>>();
-		this.#queue.push({ task, paramaters, resolve, reject });
+		this.#queue.push({
+			task,
+			paramaters,
+			resolve,
+			reject,
+			index,
+		});
+		promise.index = index;
 		promise.cancel = () => {
-			this.cancel(task);
+			this.cancel(index);
 		};
 		nextTick(() => {
 			this.#execute();
@@ -92,12 +110,33 @@ export class ParallelTask {
 		return promise;
 	}
 
-	cancel(task: Fn<any[], Awaitable<any>>) {
-		const index = this.#queue.findIndex(i => i.task === task);
+	/**
+	 * Cancel the task.
+	 * @param task The task to cancel, can be a function or an index.
+	 * If it's a function, it will cancel the first task that matches the function.
+	 */
+	cancel(task: Fn<any[], Awaitable<any>> | number) {
+		let index = -1;
+		if (isNumber(task)) {
+			index = this.#queue.findIndex(i => i.index === task);
+		} else if (isFunction(task)) {
+			index = this.#queue.findIndex(i => i.task === task);
+		}
 		if (index > -1) {
 			this.#queue.splice(index, 1);
 			this.#execute();
 		}
+	}
+
+	/**
+	 * Whether the give task is pending. If the result is false, it may be canceled or executed.
+	 * @param task The task to check, can be a function or an index.
+	 */
+	isPending(task: Fn<any[], Awaitable<any>> | number) {
+		if (isNumber(task)) {
+			return this.#queue.some(i => i.index === task);
+		}
+		return this.#queue.some(i => i.task === task);
 	}
 
 	/**
