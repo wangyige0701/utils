@@ -1,5 +1,5 @@
-import { isNumber, isString } from '@/is';
-import { toNumber, toString } from '@/to';
+import { isNumber } from '@/is';
+import { toString } from '@/to';
 
 /**
  * Add zero to the left of the number, containing the digits string
@@ -11,25 +11,6 @@ export function addZero(num: number | string, length: number = 2): string {
 		return num;
 	}
 	return num.padStart(length, '0');
-}
-
-/**
- * Pick the valid number in number or string, stop at the last digit,
- * if the type is a number, will return the value directly
- * @example
- * ```javascript
- * validNumber('123abc') // 123
- * validNumber('1.2.3') // 1.2
- * ```
- */
-export function validNumber(val: number | string): number {
-	if (isNumber(val)) {
-		return val;
-	}
-	if (isString(val)) {
-		return toNumber(val.match(/^(\d*(?:.\d+)?)[^\d]*.*?$/)?.[1]);
-	}
-	return 0;
 }
 
 type InRangeOption = {
