@@ -18,7 +18,11 @@ describe('to', () => {
 		expect(toNumber(true)).toBe(1);
 		expect(toNumber(false)).toBe(0);
 		expect(toNumber({ a: 2 })).toBe(0);
-		expect(toNumber([1, 'a'])).toBe(0);
+		expect(toNumber([1, 'a'])).toBe(1);
+		expect(toNumber(undefined)).toBe(0);
+		expect(toNumber('123abc')).toBe(123);
+		expect(toNumber('abc')).toBe(0);
+		expect(toNumber('1.2.3')).toBe(1.2);
 	});
 
 	it('toBoolean', () => {

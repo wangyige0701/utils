@@ -1,4 +1,4 @@
-import { isArray, isBoolean, isObject } from '@/is';
+import { isArray, isBoolean, isObject, isString } from '@/is';
 
 /**
  * Use `JSON.stringify` for object and array,
@@ -12,9 +12,19 @@ export function toString(val: any): string {
 }
 
 /**
- * Convert to effective number, if result is NaN, return 0
+ * Convert to effective number, if result is NaN, return 0.
+ * - For string, use `parseFloat` to convert
+ * - For object, use `parseFloat` to convert
+ * @example
+ * ```ts
+ * toNumber([1,2,3]); // 1
+ * ```
+ * - The rest use `Number` constructor to convert
  */
 export function toNumber(val: any): number {
+	if (isString(val) || typeof val === 'object') {
+		return parseFloat(val) || 0;
+	}
 	return Number(val) || 0;
 }
 

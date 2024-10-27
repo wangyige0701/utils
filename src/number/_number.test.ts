@@ -1,28 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import {
-	addZero,
-	validNumber,
-	inRange,
-	clamp,
-	randomInteger,
-	matchNumber,
-} from '@/number';
+import { addZero, inRange, clamp, randomInteger, matchNumber } from '@/number';
 
 describe('number', () => {
 	it('addZero', () => {
 		expect(addZero(1)).toBe('01');
 		expect(addZero(12, 3)).toBe('012');
 		expect(addZero('12', 4)).toBe('0012');
-	});
-
-	it('validNumber', () => {
-		expect(validNumber(1)).toBe(1);
-		expect(validNumber('1')).toBe(1);
-		expect(validNumber('1.1')).toBe(1.1);
-		expect(validNumber('1.3.6')).toBe(1.3);
-		expect(validNumber('143abc')).toBe(143);
-		expect(validNumber('1.1abc')).toBe(1.1);
-		expect(validNumber('true')).toBe(0);
 	});
 
 	it('inRange', () => {
