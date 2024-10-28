@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { delay } from '@/time';
+import { delay, checkFrequency } from '@/time';
 
 describe('time', () => {
 	it('delay', async () => {
@@ -23,5 +23,32 @@ describe('time', () => {
 		});
 		expect(i).toBe(2);
 		expect(performance.now() - start).toBeGreaterThanOrEqual(3000);
+	});
+
+	it('checkFrequency', async () => {
+		let i = 0;
+		const check = checkFrequency(
+			{
+				range: 1000,
+				maximum: 2,
+			},
+			options => {
+				console.log(options);
+				i++;
+			},
+		);
+		check(1);
+		check(1);
+		check(1);
+		check(1);
+		check(1);
+		expect(i).toBe(3);
+		await delay(1000);
+		check(1);
+		await delay(500);
+		check(1);
+		await delay(500);
+		check(3);
+		expect(i).toBe(4);
 	});
 });
