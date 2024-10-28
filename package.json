@@ -1,6 +1,6 @@
 {
 	"name": "@wang-yige/utils",
-	"version": "0.0.11",
+	"version": "0.0.12",
 	"type": "module",
 	"description": "Some utils for JavaScript / TypeScript, collected from daily use",
 	"main": "dist/index.cjs",
