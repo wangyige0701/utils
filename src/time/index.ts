@@ -42,14 +42,16 @@ type FrequencyOptions = {
 	maximum: number;
 };
 
+type FrequencyCb = Fn<
+	[config: FrequencyOptions, current: number, type?: string],
+	any
+>;
+
 /**
  * To check the frequency of the target execution.
  * @param cb The callback if the frequency over the limit.
  */
-export function checkFrequency(
-	options: FrequencyOptions,
-	cb: Fn<[config: FrequencyOptions], any>,
-) {
+export function checkFrequency(options: FrequencyOptions, cb: FrequencyCb) {
 	const { range, maximum } = options;
 	if (!isNumber(range) || !isNumber(maximum)) {
 		throw new Error('The range and maximum must be a number');
@@ -57,11 +59,14 @@ export function checkFrequency(
 	if (range < 0 || maximum < 0) {
 		throw new Error('The range and maximum must be a positive number');
 	}
-	const queue = [] as Array<{ time: number; count: number }>;
-	function discard(cb: Fn<[config: FrequencyOptions], any>) {
+	const queue = [] as Array<{ time: number; count: number; type?: string }>;
+	function discard(cb: FrequencyCb, type?: string) {
 		const current = precisionMillisecond();
 		for (let i = 0; i < queue.length; i++) {
-			const { time, count } = queue[i];
+			const { time, type: recordType } = queue[i];
+			if (type && type !== recordType) {
+				continue;
+			}
 			if (current - time <= range) {
 				if (i >= 1) {
 					queue.splice(0, i);
@@ -69,18 +74,28 @@ export function checkFrequency(
 				break;
 			}
 		}
-		const countSum = queue.reduce((sum, item) => sum + item.count, 0);
+		const countSum = type
+			? queue.reduce((sum, item) => {
+					return sum + (type === item.type ? item.count : 0);
+				}, 0)
+			: queue.reduce((sum, item) => sum + item.count, 0);
 		if (countSum > maximum) {
-			cb(options);
+			cb(options, countSum, type);
 		}
 	}
+	let timer: NodeJS.Timeout | null = null;
 	/**
 	 * Trigger to collect times.
 	 * @param count The count to add to the queue.
+	 * @param type The type of the trigger.
 	 */
-	return function trigger(count: number = 1) {
+	return function trigger(count: number = 1, type?: string) {
+		timer && clearTimeout(timer);
+		timer = setTimeout(() => {
+			queue.length = 0;
+		}, range * 2);
 		const current = precisionMillisecond();
-		queue.push({ time: current, count });
-		discard(cb);
+		queue.push({ time: current, count, type });
+		discard(cb, type);
 	};
 }
