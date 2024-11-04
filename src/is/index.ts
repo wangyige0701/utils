@@ -40,11 +40,11 @@ export function isGeneralObject(val: any): val is object {
 }
 
 export function isUndefined(val: any): val is undefined {
-	return toString(val) === '[object Undefined]';
+	return typeof val === 'undefined';
 }
 
 export function isNull(val: any): val is null {
-	return toString(val) === '[object Null]';
+	return val === null;
 }
 
 export function isDef<T>(val: T): val is NonNullable<T> {
