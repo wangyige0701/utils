@@ -71,3 +71,15 @@ export async function asyncForeach<T extends any[]>(
 	}
 	return result;
 }
+
+/**
+ * Remove elements from array
+ */
+export function arrayRemove(arr: any[], ...items: any[]) {
+	for (const i of items) {
+		const index = arr.indexOf(i);
+		if (index > -1) {
+			arr.splice(index, 1);
+		}
+	}
+}
