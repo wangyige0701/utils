@@ -47,4 +47,10 @@ describe('singleton use globalThis.Proxy', () => {
 		expectTypeOf(a1).toMatchTypeOf<A>();
 		expectTypeOf(a2).toMatchTypeOf<A>();
 	});
+
+	it('singleton with constructor', () => {
+		class A {}
+		const ASingleton = singleton(A);
+		expect(ASingleton.prototype.constructor === ASingleton).toBe(true);
+	});
 });
