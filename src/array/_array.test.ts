@@ -1,5 +1,12 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { joinElements, at, last, first, asyncForeach } from '@/array';
+import {
+	joinElements,
+	at,
+	last,
+	first,
+	asyncForeach,
+	arrayUnique,
+} from '@/array';
 import { delay } from '@/time';
 
 describe('array', () => {
@@ -40,5 +47,10 @@ describe('array', () => {
 		});
 		expect(result).toEqual([2, 4, 6]);
 		expect(performance.now() - start).toBeGreaterThanOrEqual(900); // 3 * 300
+	});
+
+	it('arrayUnique', () => {
+		const arr = [1, 2, 3, 1, 2, 3];
+		expect(arrayUnique(arr)).toEqual([1, 2, 3]);
 	});
 });

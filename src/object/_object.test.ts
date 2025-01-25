@@ -5,7 +5,8 @@ import {
 	objectKeys,
 	isKeyOf,
 	inEnum,
-	objectPick,
+	pick,
+	omit,
 } from '@/object';
 
 describe.concurrent('object', () => {
@@ -125,24 +126,39 @@ describe.concurrent('object', () => {
 			}
 		});
 
-		it('objectPick', () => {
+		it('pick', () => {
 			const obj = { a: { b: 1 }, c: 2, d: void 0 } as const;
-			const a1 = objectPick(obj, 'a');
-			const a2 = objectPick.omitUndefined(obj, 'a');
+			const a1 = pick(obj, 'a');
+			const a2 = pick.omitUndefined(obj, 'a');
 			expect(a1).toEqual({ a: { b: 1 } });
 			expect(a2).toEqual({ a: { b: 1 } });
 			expectTypeOf(a1).toMatchTypeOf<{ a: { b: 1 } }>();
 
-			const b1 = objectPick(obj, 'c');
+			const b1 = pick(obj, 'c');
 			expect(b1).toEqual({ c: 2 });
 			expectTypeOf(b1).toMatchTypeOf<{ c: 2 }>();
 
-			const c1 = objectPick(obj, 'd');
-			const c2 = objectPick.omitUndefined(obj, 'd');
+			const c1 = pick(obj, 'd');
+			const c2 = pick.omitUndefined(obj, 'd');
 			expect(c1).toEqual({ d: void 0 });
 			expect(c2).toEqual({});
 			expectTypeOf(c1).toMatchTypeOf<{ d: undefined }>();
 			expectTypeOf(c2).toMatchTypeOf<{}>();
+
+			const d1 = pick(obj, ['a', 'c']);
+			expect(d1).toEqual({ a: { b: 1 }, c: 2 });
+			expectTypeOf(d1).toMatchTypeOf<{ a: { b: 1 }; c: 2 }>();
+		});
+
+		it('omit', () => {
+			const obj = { a: { b: 1 }, c: 2, d: void 0 } as const;
+			const a1 = omit(obj, 'a');
+			expect(a1).toEqual({ c: 2, d: void 0 });
+			expectTypeOf(a1).toMatchTypeOf<{ c: 2; d: undefined }>();
+
+			const b1 = omit(obj, ['a', 'd']);
+			expect(b1).toEqual({ c: 2 });
+			expectTypeOf(b1).toMatchTypeOf<{ c: 2 }>();
 		});
 	});
 });

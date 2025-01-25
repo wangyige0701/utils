@@ -83,3 +83,15 @@ export function arrayRemove(arr: any[], ...items: any[]) {
 		}
 	}
 }
+
+/**
+ * Remove duplicates from array
+ */
+export function arrayUnique<T>(arr: T[]): T[] {
+	return arr.reduce((prev, curr) => {
+		if (!prev.includes(curr)) {
+			prev.push(curr);
+		}
+		return prev;
+	}, [] as T[]);
+}
