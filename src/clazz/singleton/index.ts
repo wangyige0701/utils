@@ -53,27 +53,30 @@ export const singleton = (() => {
 		proxy: boolean,
 		fixArgs: any[],
 	): Fn<any[], T> {
-		let _instance: T;
+		let instance: T;
 		const params: any[] = [];
 		function _construct(this: any, ...args: any[]) {
 			if (new.target === _construct || this instanceof _construct) {
 				return _construct(...fixArgs, ...args);
 			}
-			if (!_instance) {
+			if (!instance) {
 				params.push(...args);
 				if (!proxy) {
-					_instance = new clazz(...args);
-					_instance.constructor = _construct;
+					instance = new clazz(...args);
+					if ((instance as any).__proto__) {
+						(instance as any).__proto__.constructor = _construct;
+					} else {
+						instance.constructor = _construct;
+					}
 				} else {
-					_instance = new (getGlobal().Proxy)(new clazz(...args), {
+					instance = new (getGlobal().Proxy)(new clazz(...args), {
 						get(target, p) {
 							if (p === 'constructor') {
 								return _construct;
 							}
 							const result = Reflect.get(target, p);
 							if (isFunction(result)) {
-								return (...args: any[]) =>
-									result.apply(target, args);
+								return result.bind(target);
 							}
 							return result;
 						},
@@ -81,7 +84,7 @@ export const singleton = (() => {
 				}
 			}
 			paramsCheck(params, args);
-			return _instance;
+			return instance;
 		}
 		return _construct;
 	}
@@ -132,6 +135,14 @@ export const singleton = (() => {
 				}
 			};
 			ins.prototype.constructor = ins;
+			for (const key of Object.getOwnPropertyNames(clazz)) {
+				if (key === 'prototype' || key === 'length' || key === 'name') {
+					continue;
+				}
+				if (clazz.hasOwnProperty(key)) {
+					(ins as any)[key] = (clazz as any)[key];
+				}
+			}
 			return ins;
 		};
 	}

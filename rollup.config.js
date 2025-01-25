@@ -25,7 +25,7 @@ const plugins = [
 ];
 
 /** @type {import('rollup').RollupOptions[]} */
-export default [
+const configs = [
 	...enteries.map(input => {
 		/** @type {import('rollup').RollupOptions} */
 		const config = {
@@ -74,27 +74,37 @@ export default [
 		};
 		return config;
 	}),
-	...enteries.map(input => {
-		/** @type {import('rollup').RollupOptions} */
-		const config = {
-			input,
-			output: {
-				name: '$wyg',
-				file: 'dist/wang-yige.utils.min.js',
-				format: 'iife',
-			},
-			plugins: [
-				...plugins,
-				terser({
-					module: false,
-					compress: {
-						ecma: 2015,
-						pure_getters: true,
-					},
-					safari10: true,
-				}),
-			],
-		};
-		return config;
-	}),
 ];
+
+export default arg => {
+	const isBrowser = arg.context === 'browser';
+	/** @type {import('rollup').RollupOptions[]} */
+	const iife = [
+		...enteries.map(input => {
+			/** @type {import('rollup').RollupOptions} */
+			const config = {
+				input,
+				output: {
+					name: '$wyg',
+					file: 'dist/wang-yige.utils.min.js',
+					format: 'iife',
+				},
+				plugins: [
+					...plugins,
+					isBrowser
+						? del({ targets: ['dist/*'] })
+						: terser({
+								module: false,
+								compress: {
+									ecma: 2015,
+									pure_getters: true,
+								},
+								safari10: true,
+							}),
+				],
+			};
+			return config;
+		}),
+	];
+	return isBrowser ? iife : [...configs, ...iife];
+};
