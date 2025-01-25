@@ -96,11 +96,25 @@ export const singleton = (() => {
 			...fixArgs: Params
 		) => {
 			const _construct = _createConstructor(clazz, true, fixArgs);
-			return new (getGlobal().Proxy)(clazz as Singleton<T, P, Params>, {
-				construct(_, args) {
-					return _construct(...fixArgs, ...args);
+			const ins = new (getGlobal().Proxy)(
+				clazz as Singleton<T, P, Params>,
+				{
+					construct(_, args) {
+						return _construct(...fixArgs, ...args);
+					},
+					get(target, p) {
+						if (p === 'prototype') {
+							const proto = Reflect.get(target, p);
+							if (proto.constructor !== ins) {
+								proto.constructor = ins;
+							}
+							return proto;
+						}
+						return Reflect.get(target, p);
+					},
 				},
-			});
+			);
+			return ins;
 		};
 	} else {
 		singleton = <
@@ -112,13 +126,14 @@ export const singleton = (() => {
 			...fixArgs: Params
 		) => {
 			const _construct = _createConstructor(clazz, false, fixArgs);
-			return <Singleton<T, P, Params>>class {
+			const ins = <Singleton<T, P, Params>>class {
 				constructor(...args: any[]) {
 					return _construct(...fixArgs, ...args);
 				}
 			};
+			ins.prototype.constructor = ins;
+			return ins;
 		};
 	}
-
 	return singleton;
 })();
