@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<script>
+			window.Proxy = null;
+		</script>
+		<script src="./dist/wang-yige.utils.min.js"></script>
+		<script>
+			const { singleton } = $wyg;
+			class A {
+				static a = 1;
+				static use() {
+					console.log(this);
+					return 2;
+				}
+				constructor() {
+					console.log('A');
+				}
+				test() {
+					console.log(this);
+					return 3;
+				}
+			}
+
+			const B = singleton(A);
+
+			console.dir(A);
+			console.dir(B);
+
+			const a = new A();
+			const b = new B();
+
+			console.log(a);
+			console.log(b);
+		</script>
+	</body>
+</html>

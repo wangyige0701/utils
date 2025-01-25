@@ -30,6 +30,7 @@
 	},
 	"scripts": {
 		"build": "rollup -c",
+		"browser": "rollup -c -w --context=browser",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
