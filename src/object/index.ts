@@ -2,6 +2,7 @@ import type { Fn, OmitValues, Values } from '@/types';
 import { isFunction, isNull, isString, isSymbol, isUndefined } from '@/is';
 import { splitByPoint } from '@/string';
 import { toArray } from '@/to';
+import { arrayUnique } from '@/array';
 
 // objectKeys
 export * from './object-keys';
@@ -114,12 +115,15 @@ export function inEnum<T extends object>(o: T, k: any): k is Values<T> & {} {
  * ```ts
  * const a = { a: 1, b: 2, c: undefined };
  *
- * objectPick(a, 'a', 'c') // { a: 1, c: undefined }
- * objectPick.omitUndefined(a, 'a', 'c') // { a: 1 }
+ * objectPick(a, ['a', 'c']) // { a: 1, c: undefined }
+ * objectPick.omitUndefined(a, ['a', 'c']) // { a: 1 }
+ *
+ * // or
+ * objectPick(a, 'a') { a: 1 }
  *
  * ```
  */
-export const objectPick = (() => {
+export const pick = (() => {
 	function _pick<T extends object, K extends keyof T>(
 		o: T,
 		keys: K[],
@@ -135,7 +139,7 @@ export const objectPick = (() => {
 		keys: K[],
 		omit: boolean = false,
 	) {
-		return keys.reduce(
+		return arrayUnique(keys).reduce(
 			(prev, curr) => {
 				if (curr in o) {
 					if (!omit || !isUndefined(o[curr])) {
@@ -157,3 +161,23 @@ export const objectPick = (() => {
 	) => _pick(o, toArray(keys), true);
 	return objectPick;
 })();
+
+export const objectPick = pick;
+
+/**
+ * Omit keys from an object.
+ */
+export function omit<T extends object, K extends keyof T>(
+	o: T,
+	keys: K | K[],
+): Omit<T, K> {
+	return arrayUnique(toArray(keys)).reduce(
+		(prev, curr) => {
+			delete prev[curr];
+			return prev;
+		},
+		{ ...o },
+	);
+}
+
+export const objectOmit = omit;
