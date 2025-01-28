@@ -48,7 +48,7 @@ export const singleton = (() => {
 		}
 	}
 
-	function _createConstructor<T extends Constructor<any, any[]>>(
+	function createConstructor<T extends Constructor<any, any[]>>(
 		clazz: T,
 		proxy: boolean,
 		fixArgs: any[],
@@ -98,7 +98,7 @@ export const singleton = (() => {
 			clazz: T,
 			...fixArgs: Params
 		) => {
-			const _construct = _createConstructor(clazz, true, fixArgs);
+			const _construct = createConstructor(clazz, true, fixArgs);
 			const ins = new (getGlobal().Proxy)(
 				clazz as Singleton<T, P, Params>,
 				{
@@ -128,7 +128,7 @@ export const singleton = (() => {
 			clazz: T,
 			...fixArgs: Params
 		) => {
-			const _construct = _createConstructor(clazz, false, fixArgs);
+			const _construct = createConstructor(clazz, false, fixArgs);
 			const ins = <Singleton<T, P, Params>>class {
 				constructor(...args: any[]) {
 					return _construct(...fixArgs, ...args);
