@@ -63,11 +63,7 @@ export const singleton = (() => {
 				params.push(...args);
 				if (!proxy) {
 					instance = new clazz(...args);
-					if ((instance as any).__proto__) {
-						(instance as any).__proto__.constructor = _construct;
-					} else {
-						instance.constructor = _construct;
-					}
+					instance.constructor = _construct;
 				} else {
 					instance = new (getGlobal().Proxy)(new clazz(...args), {
 						get(target, p) {
