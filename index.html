@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<script>
-			// window.Proxy = null;
+			window.Proxy = null;
 		</script>
 		<script src="./dist/wang-yige.utils.min.js"></script>
 		<script>
@@ -15,15 +15,14 @@
 			class A {
 				static a = 1;
 				static use() {
-					console.log(this);
-					return 2;
+					return this.a;
 				}
 				constructor() {
 					console.log('A');
 				}
+				data = 'abc';
 				test() {
-					console.log(this);
-					return 3;
+					return this.data;
 				}
 			}
 
