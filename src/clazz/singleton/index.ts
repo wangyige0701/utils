@@ -100,23 +100,20 @@ export const singleton = (() => {
 		) => {
 			const _construct = createConstructor(clazz, true, fixArgs);
 			const ins = new (getGlobal().Proxy)(
-				clazz as Singleton<T, P, Params>,
+				class {} as Singleton<T, P, Params>,
 				{
 					construct(_, args) {
 						return _construct(...fixArgs, ...args);
 					},
 					get(target, p) {
 						if (p === 'prototype') {
-							const proto = Reflect.get(target, p);
-							if (proto.constructor !== ins) {
-								proto.constructor = ins;
-							}
-							return proto;
+							return Reflect.get(target, p);
 						}
-						return Reflect.get(target, p);
+						return Reflect.get(clazz, p);
 					},
 				},
 			);
+			ins.prototype.constructor = ins;
 			return ins;
 		};
 	} else {
