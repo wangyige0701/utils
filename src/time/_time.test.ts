@@ -47,11 +47,13 @@ describe('time', () => {
 		expect(i).toBe(3);
 		expect(j).toBe(5);
 		await delay(1000);
-		check(1);
+		const a = check(1);
+		expect(a).toBe(false);
 		await delay(500);
 		check(1);
 		await delay(500);
-		check(3);
+		const b = check(3);
+		expect(b).toBe(true);
 		expect(i).toBe(4);
 		expect(j).toBe(4);
 	});

@@ -49,9 +49,10 @@ type FrequencyCb = Fn<
 
 /**
  * To check the frequency of the target execution.
+ * @params options The options of the frequency check.
  * @param cb The callback if the frequency over the limit.
  */
-export function checkFrequency(options: FrequencyOptions, cb: FrequencyCb) {
+export function checkFrequency(options: FrequencyOptions, cb?: FrequencyCb) {
 	const { range, maximum } = options;
 	if (!isNumber(range) || !isNumber(maximum)) {
 		throw new Error('The range and maximum must be a number');
@@ -60,7 +61,7 @@ export function checkFrequency(options: FrequencyOptions, cb: FrequencyCb) {
 		throw new Error('The range and maximum must be a positive number');
 	}
 	const queue = [] as Array<{ time: number; count: number; type?: string }>;
-	function discard(cb: FrequencyCb, type?: string) {
+	function discard(cb?: FrequencyCb, type?: string) {
 		const current = precisionMillisecond();
 		for (let i = 0; i < queue.length; i++) {
 			const { time, type: recordType } = queue[i];
@@ -80,14 +81,18 @@ export function checkFrequency(options: FrequencyOptions, cb: FrequencyCb) {
 				}, 0)
 			: queue.reduce((sum, item) => sum + item.count, 0);
 		if (countSum > maximum) {
-			cb(options, countSum, type);
+			cb && cb(options, countSum, type);
+			return true;
 		}
+		return false;
 	}
 	let timer: NodeJS.Timeout | null = null;
 	/**
 	 * Trigger to collect times.
 	 * @param count The count to add to the queue.
 	 * @param type The type of the trigger.
+	 * @return {boolean} Whether the current function call trigger frequency limit.
+	 * - Return `true` means the current function call trigger frequency limit.
 	 */
 	return function trigger(count: number = 1, type?: string) {
 		timer && clearTimeout(timer);
@@ -96,6 +101,6 @@ export function checkFrequency(options: FrequencyOptions, cb: FrequencyCb) {
 		}, range * 2);
 		const current = precisionMillisecond();
 		queue.push({ time: current, count, type });
-		discard(cb, type);
+		return discard(cb, type);
 	};
 }
