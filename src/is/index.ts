@@ -33,7 +33,7 @@ export function isObject<T = any>(val: any): val is Record<string, T> {
 
 /**
  * Use typeof to determine if the value is an object,
- * but exclude null
+ * but exclude null, like Object, Array, Date, etc.
  */
 export function isGeneralObject(val: any): val is object {
 	return typeof val === 'object' && !isNull(val);
@@ -73,6 +73,13 @@ export function isBigint(val: any): val is bigint {
 
 export function isPromise<T = any>(val: any): val is Promise<T> {
 	return toString(val) === '[object Promise]';
+}
+
+/**
+ * Check if a value is a Promise with async keyword
+ */
+export function isAsyncFunction<T = any>(val: any): val is Promise<T> {
+	return toString(val) === '[object AsyncFunction]';
 }
 
 /**
@@ -124,8 +131,4 @@ export function isEven(num: number) {
 		throw new TypeError('Expected an integer');
 	}
 	return (num & 1) === 0;
-}
-
-export function isAsyncFunction(val: any): val is Promise<any> {
-	return toString(val) === '[object AsyncFunction]';
 }
