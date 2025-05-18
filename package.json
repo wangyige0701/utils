@@ -35,7 +35,7 @@
 		"typecheck": "tsc --noEmit",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
-		"publish": "npm publish --access=public"
+		"push": "npm publish --access=public"
 	},
 	"devDependencies": {
 		"@rollup/plugin-alias": "^5.1.0",
